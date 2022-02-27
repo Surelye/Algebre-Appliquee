@@ -311,7 +311,7 @@ bool isReflexive(map<int, set<int>> binaryRelation)
 \end{figure}
 
 \par Выход программы совпадает с тем фактом, что отношение не является рефлексивным. Теперь рассмотрим 
-бинарное отношение $ \delta $, на котором свойство рефлексивности выполняется. Рассмотрим 8 следующих пар: 
+бинарное отношение $ \delta $, для которого свойство рефлексивности выполняется. Рассмотрим 8 следующих пар: 
 
 \begin{figure}[h]
 	\center{\includegraphics{/reflexiveCheck/reflexive_binary_relation.png}}
@@ -429,7 +429,7 @@ bool isSymmetric(map<int, set<int>> binaryRelation)
 \end{figure}
 
 \par Выход программы совпадает с тем фактом, что отношение не является симметричным. Теперь рассмотрим 
-бинарное отношение $ \delta $, на котором свойство симметричности выполняется. Рассмотрим 8 следующих пар
+бинарное отношение $ \delta $, для которого свойство симметричности выполняется. Рассмотрим 8 следующих пар
 (число сгенерированных пар элементов может быть меньше, поскольку некоторые пары при генерации могли совпасть): 
 
 \begin{figure}[h]
@@ -549,7 +549,7 @@ bool isAntisymmetric(map<int, set<int>> binaryRelation)
 \end{figure}
 
 \par Выход программы совпадает с тем фактом, что отношение не является антисимметричным. Теперь рассмотрим 
-бинарное отношение $ \delta $, на котором свойство антисимметричности выполняется. Рассмотрим 8 следующих пар: 
+бинарное отношение $ \delta $, для которого свойство антисимметричности выполняется. Рассмотрим 8 следующих пар: 
 
 \begin{figure}[h]
 	\center{\includegraphics{/antisymmetricCheck/antisymmetric_binary_relation.png}}
@@ -671,7 +671,7 @@ bool isTransitive(map<int, set<int>> binaryRelation)
 \end{figure}
 
 \par Выход программы совпадает с тем фактом, что отношение не является транзитивным. Теперь рассмотрим 
-бинарное отношение $ \delta $, на котором свойство транзитивности выполняется. Перейдём на ручной ввод и 
+бинарное отношение $ \delta $, для которого свойство транзитивности выполняется. Перейдём на ручной ввод и 
 введём 8 пар элементов: 
 
 \begin{figure}[h]
@@ -722,9 +722,9 @@ void isOrder(map<int, set<int>> binaryRelation)
 	if (isReflexive(binaryRelation) && 
 			isAntisymmetric(binaryRelation) && 
 			isTransitive(binaryRelation))
-		cout << "\BINARY RELATION IS AN ORDER RELATION.\n";
+		cout << "\nBINARY RELATION IS AN ORDER RELATION.\n";
 	else
-		cout << "\BINARY RELATION IS NOT AN ORDER RELATION.\n";
+		cout << "\nBINARY RELATION IS NOT AN ORDER RELATION.\n";
 }
 	
 void isQuasi(map<int, set<int>> binaryRelation)
@@ -739,26 +739,353 @@ void isQuasi(map<int, set<int>> binaryRelation)
 
 \newpage
 
-\subsection{Описание алгоритмов построения основных замыканий бинарных отношений}
+\par \textbf{Результат тестирования программы классификации бинарных отношений.} 
+\par Для демонстрации работы программы рассмотрим шесть произвольных бинарных отношений $ \rho_i, \, i = 
+\overline{1, 6} $. В каждой паре одно отношение будет принадлежать какому-нибудь классу, а другое - нет. Начнём
+с рассмотрения отношения эквивалентности. 
+
+\par Сгенерируем 8 пар элементов, соответствующих бинарному отношению $ \rho_1 $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/equivalenceCheck/is_equivalence_check.png}}
+	\caption{Пары элементов, находящихся в неэквивалентном бинарном отношении.}
+\end{figure}
+
+\par Как видно, данное отношение не является эквивалентностью. Посмотрим на выход программы:
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/equivalenceCheck/is_equivalence_check_failed.png}}
+	\caption{Проверка на эквивалентность не пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение не является эквивалентностью. Также программа 
+сообщила, почему данное отношение не является эквивалентностью - оно нерефлексивно. Теперь рассмотрим 
+бинарное отношение $ \rho_2 $, которое является эквивалентностью. Перейдём на ручной ввод и
+введём 9 следующих пар: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/equivalenceCheck/equivalent_binary_relation.png}}
+	\caption{Пары элементов, находящихся в эквивалентном бинарном отношении.}
+\end{figure}
 
 \newpage
 
-\subsection{Псевдокоды рассмотренных алгоритмов}
+\par Как видно, отношение является эквивалентностью. Посмотрим на выход программы: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/equivalenceCheck/is_equivalence_check_success.png}}
+	\caption{Проверка на эквивалентность пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение является эквивалентностью, поскольку каждое из
+необходимых свойств выполняется. \\
+
+\par Теперь перейдём к рассмотрению отношения порядка.
+
+\par Сгенерируем 8 пар элементов, соответствующих бинарному отношению $ \rho_3 $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/orderCheck/is_order_check.png}}
+	\caption{Пары элементов, не находящихся в бинарном отношении порядка.}
+\end{figure}
+
+\par Как видно, данное отношение не является порядком. Посмотрим на выход программы:
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/orderCheck/is_order_check_failed.png}}
+	\caption{Проверка на упорядоченность не пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение не является отношением порядка. Также программа 
+сообщила, почему данное отношение не является отношением порядка - оно нерефлексивно. Теперь рассмотрим 
+бинарное отношение $ \rho_4 $, которое является отношением порядка. Перейдём на ручной ввод и
+введём 6 следующих пар: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/orderCheck/order_binary_relation.png}}
+	\caption{Пары элементов, находящихся в упорядоченном бинарном отношении.}
+\end{figure}
+
+\par Как видно, отношение является отношением порядка. Посмотрим на выход программы: 
+
+\begin{figure}[h!]
+	\center{\includegraphics{classificationCheck/orderCheck/is_order_check_success.png}}
+	\caption{Проверка на упорядоченность пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение является порядком, поскольку каждое из
+необходимых свойств выполняется. \\
+
+\par Теперь перейдём к рассмотрению отношения квазипорядка.
+
+\par Сгенерируем 8 пар элементов, соответствующих бинарному отношению $ \rho_5 $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/quasiCheck/is_quasi_check.png}}
+	\caption{Пары элементов, не находящихся в бинарном отношении квазипорядка.}
+\end{figure}
+
+\par Как видно, данное отношение не является квазипорядком. Посмотрим на выход программы:
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/quasiCheck/is_quasi_check_failed.png}}
+	\caption{Проверка на упорядоченность не пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение не является отношением квазипорядка. Также программа 
+сообщила, почему данное отношение не является отношением квазипорядка - оно нерефлексивно. Теперь рассмотрим 
+бинарное отношение $ \rho_6 $, которое является отношением квазипорядка. Перейдём на ручной ввод и
+введём 7 следующих пар: 
+
+\begin{figure}[h]
+	\center{\includegraphics{classificationCheck/quasiCheck/quasi_binary_relation.png}}
+	\caption{Пары элементов, находящихся в квазиупорядоченном бинарном отношении.}
+\end{figure}
 
 \newpage
 
-\subsection{Коды программ, реализуюших рассмотренные алгоритмы}
+\par Как видно, отношение является отношением квазипорядка. Посмотрим на выход программы: 
+
+\begin{figure}[h!]
+	\center{\includegraphics{classificationCheck/quasiCheck/is_quasi_check_success.png}}
+	\caption{Проверка на квазиупорядоченность пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение является квазипорядком, поскольку каждое из
+необходимых свойств выполняется. \\
 
 \newpage
 
-\subsection{Результаты тестирования программ}
+\subsection{Алгоритм построения рефлексивного замыкания бинарного отношения.}
+
+\textbf{Описание алгоритма построения рефлексивного замыкания бинарного отношения.}
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} замкнутое относительно свойства рефлексивности бинарное отношение $ \rho $. \\
+\textbf{Метод:} для каждого элемента $ a $, находящегося в бинарном отношении $ \rho $ (с некоторыми 
+элементами $ b_i $), в его список смежности добавляется элемент $ a $. \\
+
+\par \textbf{Псевдокод алгоритма определения свойства транзитивности.}
+
+\begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
+reflexiveClosure(binaryRelation)
+{
+	for element in binaryRelation
+	{
+		placeholder = element
+		binaryRelation[element].insert(element);
+	}
+	
+	return binaryRelation;
+}
+\end{lstlisting}
 
 \newpage
 
-\subsection{Оценки сложности рассмотренных алгоритмов}
+\par \textbf{Код программы, реализующей алгоритм построения рефлексивного замыкания бинарного отношения.}
+
+\begin{lstlisting}[caption=Код программы., mathescape]
+map<int, set<int>> 
+		reflexiveClosure(map<int, set<int>> binaryRelation)
+{
+	int i, placeholder;
+	set<int> ::iterator it;
+
+	for (auto element : binaryRelation)
+	{
+		placeholder = element.first;
+
+		binaryRelation[element.first].insert(element.first);
+	}
+
+	return binaryRelation;
+}
+\end{lstlisting}
+
+\par \textbf{Результат тестирования программы рефлексивного замыкания бинарного отношения.}
+
+\par Для демонстрации работы программы рассмотрим произвольное отношение $ \delta $.
+\par Сгенерируем 3 пары элементов, соответствующих бинарному отношению $ \delta $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/closures/reflexiveClosure/binary_relation.png}}
+	\caption{Бинарное отношение, не обладающее свойством рефлексивности.}
+\end{figure}
 
 \newpage
 
+\par Как видно, данное отношение не является рефлексивным. Построим рефлексивное замыкание этого бинарного 
+отношения:
 
+\begin{figure}[h]
+	\center{\includegraphics{/closures/reflexiveClosure/closed_binary_relation.png}}
+	\caption{Бинарное отношение после рефлексивного замыкания.}
+\end{figure}
+
+\par Как можно видеть, получившееся бинарное отношение является замкнутым относительно свойства рефлексивности, 
+что подтверждает выход программы \textit{isReflexive.}
+
+\newpage
+
+\subsection{Алгоритм построения симметричного замыкания бинарного отношения.}
+
+\textbf{Описание алгоритма построения симметричного замыкания бинарного отношения.} \\
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} замкнутое относительно свойства симметричности бинарное отношение $ \rho $. \\
+\textbf{Метод:} для каждого элемента $ a $, находящегося в бинарном отношении $ \rho $ с некоторыми 
+элементами $ b_i $, в список смежности каждого такого элемента $ b_i $ добавляется элемент $ a $. \\
+
+\par \textbf{Псевдокод алгоритма определения свойства транзитивности.}
+
+\begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
+symmetricClosure(binaryRelation)
+{
+	for element in binaryRelation:
+		for subelement in element:
+			binaryRelation[subelement].insert(element)
+	
+	return binaryRelation;
+}
+\end{lstlisting}
+
+\par \textbf{Код программы, реализующей алгоритм построения симметричного замыкания бинарного отношения.}
+
+\begin{lstlisting}[caption=Код программы., mathescape]
+map<int, set<int>> 
+		symmetricClosure(map<int, set<int>> binaryRelation)
+{
+	set<int> ::iterator it;
+	for (auto element : binaryRelation)
+	{
+		it = element.second.begin();
+		for (; it != element.second.end(); ++it)
+			binaryRelation[*it].insert(element.first);
+	}
+	return binaryRelation;
+}
+\end{lstlisting}
+
+\par \textbf{Результат тестирования программы симметричного замыкания бинарного отношения.}
+
+\par Для демонстрации работы программы рассмотрим произвольное отношение $ \delta $.
+\par Сгенерируем 3 пары элементов, соответствующих бинарному отношению $ \delta $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/closures/symmetricClosure/binary_relation.png}}
+	\caption{Бинарное отношение, не обладающее свойством симметричности.}
+\end{figure}
+
+\par Как видно, данное отношение не является симметричным. Построим симметричное замыкание этого бинарного 
+отношения:
+
+\begin{figure}[h]
+	\center{\includegraphics{/closures/symmetricClosure/closed_binary_relation.png}}
+	\caption{Бинарное отношение после симметричного замыкания.}
+\end{figure}
+
+\par Как можно видеть, получившееся бинарное отношение является замкнутым относительно свойства симметричности, 
+что подтверждает выход программы \textit{isSymmetric.}
+
+\newpage
+
+\textbf{Описание алгоритма построения транзитивного замыкания бинарного отношения.} \\
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} замкнутое относительно свойства транзитивности бинарное отношение $ \rho $. \\
+\textbf{Метод:} для каждого элемента $ a $, находящегося в бинарном отношении $ \rho $ с некоторыми 
+элементами $ b_i $, все элементы, находящиеся в списке смежности элемента $ b_i $, должны быть добавлены в 
+список смежности элемента $ a $. Но поскольку после всего одного применения функции \textit{transitiveClosure} 
+получившееся бинарное отношение может оказаться незамкнутым относительно свойства транзитивности, применение 
+функции на $ \rho $ надо продолжать до тех пор, пока функция \textit{isTransitive} не вернёт \textbf{true}. \\
+
+\par \textbf{Псевдокод алгоритма определения свойства транзитивности.}
+
+\begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
+transitiveClosureMachinery(binaryRelation)
+{
+	for element in binaryRelation:
+		for subelement in element:
+			for elt in binaryRelation[subelement]:
+				binaryRelation[element].insert(elt);            
+		
+	return binaryRelation;
+}
+
+transitiveClosure(binaryRelation)
+{
+    while (!isTransitive(binaryRelation))
+        binaryRelation = 
+					transitiveClosureMachinery(binaryRelation);
+
+    return binaryRelation;
+}
+
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Код программы, реализующей алгоритм построения симметричного замыкания бинарного отношения.}
+
+\begin{lstlisting}[caption=Код программы., mathescape]
+map<int, set<int>> 
+		transitiveClosure(map<int, set<int>> binaryRelation)
+{
+	set<int> ::iterator it, itHelper;
+
+	for (auto element : binaryRelation)
+	{
+		it = element.second.begin();
+
+		for (; it != element.second.end(); ++it)
+		{
+			itHelper = binaryRelation[*it].begin();
+
+			for (; itHelper != binaryRelation[*it].end(); ++itHelper)            
+				binaryRelation[element.first].insert(*itHelper);            
+		}
+	}
+
+	return binaryRelation;
+}
+
+map<int, set<int>> 
+		transitiveClosure(map<int, set<int>> binaryRelation)
+{
+    while (!isTransitive(binaryRelation))
+        binaryRelation = 
+					transitiveClosureMachinery(binaryRelation);
+
+    return binaryRelation;
+}
+
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Результат тестирования программы транзитивного замыкания бинарного отношения.}
+
+\par Для демонстрации работы программы рассмотрим произвольное отношение $ \delta $.
+\par Перейдём на ручной ввод и сгенерируем 6 пар элементов, соответствующих бинарному отношению $ \delta $. 
+Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/closures/transitiveClosure/binary_relation.png}}
+	\caption{Бинарное отношение, не обладающее свойством транзитивности.}
+\end{figure}
+
+\par Как видно, данное отношение не является транзитивным. Построим транзитивное замыкание этого бинарного 
+отношения:
+
+\begin{figure}[h]
+	\center{\includegraphics{/closures/transitiveClosure/closed_binary_relation.png}}
+	\caption{Бинарное отношение после транзитивного замыкания.}
+\end{figure}
+
+\par Заметим, что $ (f \circ f)(\delta) $ (где $ f $ - функция \textit{transitiveClosureMachinery}) оказалось
+недостаточно для замыкания исходного бинарного отношения.
+\par Получившееся бинарное отношение является замкнутым относительно свойства транзитивности, что при третьем
+применении функции \\ \textit{transitiveClosureMachinery} подтверждает выход программы \textit{isTransitive.}
+
+\newpage
+
+\conclusion
 
 \end{document}
