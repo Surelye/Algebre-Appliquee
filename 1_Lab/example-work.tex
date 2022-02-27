@@ -292,21 +292,21 @@ bool isReflexive(map<int, set<int>> binaryRelation)
 
 \newpage
 
-\par \textbf{Результат тестирования программы определения свойства бинарного отношения.}
+\par \textbf{Результат тестирования программы определения свойства рефлексивности.}
 
 \par Для демонстрации работы программы рассмотрим два произвольных бинарных отношения $ \rho $ и $ \delta $, 
-на первом из которых свойство рефлексивности выполняется, а на втором нет.
+для одного из которых свойство рефлексивности выполняется, а для другого нет.
 \par Сгенерируем 8 пар элементов, соответствующих бинарному отношению $ \rho $. Получаем следующие пары: 
 
 \begin{figure}[h]
-	\center{\includegraphics{is_reflexive_check.png}}
+	\center{\includegraphics{/reflexiveCheck/is_reflexive_check.png}}
 	\caption{Пары элементов, находящихся в нерефлексивном бинарном отношении.}
 \end{figure}
 
 \par Как видно, данное отношение не является рефлексивным. Посмотрим на выход программы:
 
 \begin{figure}[h]
-	\center{\includegraphics{is_reflexive_check_failed.png}}
+	\center{\includegraphics{/reflexiveCheck/is_reflexive_check_failed.png}}
 	\caption{Проверка на рефлексивность не пройдена.}
 \end{figure}
 
@@ -314,7 +314,7 @@ bool isReflexive(map<int, set<int>> binaryRelation)
 бинарное отношение $ \delta $, на котором свойство рефлексивности выполняется. Рассмотрим 8 следующих пар: 
 
 \begin{figure}[h]
-	\center{\includegraphics{reflexive_binary_relation.png}}
+	\center{\includegraphics{/reflexiveCheck/reflexive_binary_relation.png}}
 	\caption{Пары элементов, находящихся в рефлексивном бинарном отношении.}
 \end{figure}
 
@@ -323,8 +323,8 @@ bool isReflexive(map<int, set<int>> binaryRelation)
 \par Как видно, отношение является рефлексивным. Посмотрим на выход программы: 
 
 \begin{figure}[h]
-	\center{\includegraphics{is_reflexive_check_failed.png}}
-	\caption{Проверка на рефлексивность не пройдена.}
+	\center{\includegraphics{/reflexiveCheck/is_reflexive_check_success.png}}
+	\caption{Проверка на рефлексивность пройдена.}
 \end{figure}
 
 \par Выход программы совпадает с тем фактом, что отношение является рефлексивным.
@@ -333,10 +333,409 @@ bool isReflexive(map<int, set<int>> binaryRelation)
 
 \subsection{Алгоритм определения свойства симметричности.}
 
-\par \textbf{Описание алгоритма определения свойства симметричности.}
+\textbf{Описание алгоритма определения свойства симметричности.}
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} строка <<Бинарное отношение является/не является симметричным.>> и bool значение \textbf{true}
+или \textbf{false}. \\
+\textbf{Метод:} для каждого элемента $ a $, находящегося в бинарном отношении $ \rho $ (с некоторыми 
+элементами $ b_i $), просматривается его список смежности. Для каждого элемента $ b_i $ из списка смежности 
+элемента $ a $ просматривается его список смежности, и в нём ищется элемент $ a $. Алгоритм прекращает свою 
+работу, если был найден элемент $ b_i $ из списка смежности элемента $ a $, список смежности которого не 
+содержит элемента $ a $, или, если для всякого элемента $ a $ списки смежностей элементов $ b_i $ 
+содержат $ a $. \\
 
-\textbf{Вход:} список смежности бинарного отношения $ \rho $.
-\textbf{выход:}
+\par \textbf{Псевдокод алгоритма определения свойства симметричности.}
+
+\begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
+isSymmetric(binaryRelation)
+{
+	for element in binaryRelation			
+		for subelement in element
+		{
+			flag = false
+
+			if element in binaryRelation[subelement]
+				flag = true
+
+			if (!flag)
+				return false;
+		}
+
+	return true;
+}
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Код программы, реализующей алгоритм определения свойства симметричности.}
+
+\begin{lstlisting}[caption=Код программы., mathescape]
+bool isSymmetric(map<int, set<int>> binaryRelation)
+{
+	bool isSymmetric = false;
+	set<int> ::iterator it, itHelper;
+
+	for (auto element : binaryRelation)
+	{
+		it = element.second.begin();
+
+		for (; it != element.second.end(); ++it)
+		{
+			isSymmetric = false;
+
+			if (!binaryRelation[*it].empty())
+			{
+				itHelper = binaryRelation[*it].begin();
+
+				for (; itHelper != binaryRelation[*it].end(); ++itHelper)
+					if (element.first == *itHelper)
+					{
+						isSymmetric = !isSymmetric;
+						break;
+					}
+			}
+            
+			if (!isSymmetric)
+			{
+				cout << "\nBINARY RELATION IS NOT SYMMETRIC.\n";
+				return false;
+			}
+		}
+	}
+
+	cout << "\nBINARY RELATION IS SYMMETRIC.\n";
+	return true;
+}
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Результат тестирования программы определения свойства симметричности.}
+
+\par Для демонстрации работы программы рассмотрим два произвольных бинарных отношения $ \rho $ и $ \delta $, 
+для одгого из которых свойство симметричности выполняется, а для другого нет.
+\par Сгенерируем 8 пар элементов, соответствующих бинарному отношению $ \rho $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/symmetricCheck/is_symmetric_check.png}}
+	\caption{Пары элементов, находящихся в несимметричном бинарном отношении.}
+\end{figure}
+
+\par Как видно, данное отношение не является симметричным. Посмотрим на выход программы:
+
+\begin{figure}[h]
+	\center{\includegraphics{/symmetricCheck/is_symmetric_check_failed.png}}
+	\caption{Проверка на симметричность не пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение не является симметричным. Теперь рассмотрим 
+бинарное отношение $ \delta $, на котором свойство симметричности выполняется. Рассмотрим 8 следующих пар
+(число сгенерированных пар элементов может быть меньше, поскольку некоторые пары при генерации могли совпасть): 
+
+\begin{figure}[h]
+	\center{\includegraphics{/symmetricCheck/symmetric_binary_relation.png}}
+	\caption{Пары элементов, находящихся в симметричном бинарном отношении.}
+\end{figure}
+
+\newpage
+
+\par Как видно, отношение является симметричным. Посмотрим на выход программы: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/symmetricCheck/is_symmetric_check_success.png}}
+	\caption{Проверка на симметричность пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение является симметричным.
+
+\newpage
+
+\subsection{Алгоритм определения свойства антисимметричности.}
+
+\textbf{Описание алгоритма определения свойства антисимметричности.}
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} строка <<Бинарное отношение является/не является антисимметричным.>> и bool значение 
+\textbf{true} или \textbf{false}. \\
+\textbf{Метод:} для каждого элемента $ a $, находящегося в бинарном отношении $ \rho $ (с некоторыми 
+элементами $ b_i $), просматривается его список смежности. Для каждого элемента $ b_i $ из списка смежности 
+элемента $ a $ просматривается его список смежности. В этом списке смежности не должно содержаться элемента 
+$ a $, за исключением ситуации, когда $ a $ и $ b_i $ - один и тот же элемент, и переход из $ a $ в 
+$ b_i $ - петля. \\
+
+\par \textbf{Псевдокод алгоритма определения свойства антисимметричности.}
+
+\begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
+isAntisymmetric(binaryRelation)
+{	
+	for element in binaryRelation:	
+		for subelement in element
+		{
+			isAntisymmetric = true;
+
+			if subelement is not element
+			{
+				for elt in binaryRelation[subelement]
+					if (elt == element)
+						isAntisymmetric = false;
+			}
+	
+			if (!isAntisymmetric)			
+				return false;			
+		}
+
+	return true;
+}
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Код программы, реализующей алгоритм определения свойства антисимметричности.}
+
+\begin{lstlisting}[caption=Код программы., mathescape]
+bool isAntisymmetric(map<int, set<int>> binaryRelation)
+{
+	bool isAntisymmetric = false;
+	set<int> ::iterator it, itHelper;
+
+	for (auto element : binaryRelation)
+	{
+		it = element.second.begin();
+
+		for (; it != element.second.end(); ++it)
+		{
+			isAntisymmetric = true;
+
+			if (!binaryRelation[*it].empty() && *it != element.first)
+			{
+				itHelper = binaryRelation[*it].begin();
+
+				for (; itHelper != binaryRelation[*it].end(); ++itHelper)
+					if (*itHelper == element.first)
+						isAntisymmetric = false;
+			}
+
+			if (!isAntisymmetric)
+			{
+				cout << "\nBINARY RELATION IS NOT ANTISYMMETRIC.\n";
+				return false;
+			}            
+		}
+	}
+
+	cout << "\nBINARY RELATION IS ANTISYMMETRIC.\n";
+	return true;
+}
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Результат тестирования программы определения свойства антисимметричности.}
+
+\par Для демонстрации работы программы рассмотрим два произвольных бинарных отношения $ \rho $ и $ \delta $, 
+для одгого из которых свойство антисимметричности выполняется, а для другого нет.
+\par Сгенерируем 8 пар элементов (число сгенерированных пар элементов может быть меньше, поскольку некоторые
+пары при генерации могли совпасть), соответствующих бинарному отношению $ \rho $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/antisymmetricCheck/is_antisymmetric_check.png}}
+	\caption{Пары элементов, находящихся в неантисимметричном бинарном отношении.}
+\end{figure}
+
+\par Как видно, данное отношение не является антисимметричным. Посмотрим на выход программы:
+
+\begin{figure}[h]
+	\center{\includegraphics{/antisymmetricCheck/is_antisymmetric_check_failed.png}}
+	\caption{Проверка на антисимметричность не пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение не является антисимметричным. Теперь рассмотрим 
+бинарное отношение $ \delta $, на котором свойство антисимметричности выполняется. Рассмотрим 8 следующих пар: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/antisymmetricCheck/antisymmetric_binary_relation.png}}
+	\caption{Пары элементов, находящихся в симметричном бинарном отношении.}
+\end{figure}
+
+\newpage
+
+\par Как видно, отношение является антисимметричным. Посмотрим на выход программы: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/antisymmetricCheck/is_antisymmetric_check_success.png}}
+	\caption{Проверка на симметричность пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение является антисимметричным.
+
+\newpage
+
+\subsection{Алгоритм определения свойства транзитивности.}
+
+\textbf{Описание алгоритма определения свойства транзитивности.}
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} строка <<Бинарное отношение является/не является транзитивным.>> и bool значение \textbf{true}
+или \textbf{false}. \\
+\textbf{Метод:} для каждого элемента $ a $, находящегося в бинарном отношении $ \rho $ (с некоторыми 
+элементами $ b_i $), просматривается его список смежности. Для каждого элемента $ b_i $ из списка смежности 
+элемента $ a $ просматривается его список смежности. Для удовлетворения условия транзитивности каждый элемент 
+из списка смежности $ b_i $ должен содержаться в списке смежности элемента $ a $. Алгоритм завершает свою 
+работу, если находится такой элемент, что это условие для него не выполняется, или после проверки и выполнения
+этого условия для всякого элемента $ a $. \\
+
+\par \textbf{Псевдокод алгоритма определения свойства транзитивности.}
+
+\begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
+isTransitive(binaryRelation)
+{	
+	for element in binaryRelation:	
+		for subelement in element:		
+			for elt in binaryRelation[subelement]
+			{
+				isTransitive = false;
+
+				for eltSup in element:
+					if (elt == eltSup)
+						isTransitive = true
+
+				if (!isTransitive)				
+					return false;				
+			}
+		}
+	}
+
+	return true;
+}
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Код программы, реализующей алгоритм определения свойства транзитивности.}
+
+\begin{lstlisting}[caption=Код программы., mathescape]
+bool isTransitive(map<int, set<int>> binaryRelation)
+{
+	bool isTransitive = false;
+	set<int> ::iterator it, itHelper, itSup;
+	
+	for (auto element : binaryRelation)
+	{
+		it = element.second.begin();
+	
+		for (; it != element.second.end(); ++it)
+		{
+			if (!binaryRelation[*it].empty())
+			{
+				itHelper = binaryRelation[*it].begin();
+				
+				for (; itHelper != binaryRelation[*it].end(); ++itHelper)
+				{
+					itSup = element.second.begin();
+					isTransitive = false;
+
+					for (; itSup != element.second.end(); ++itSup)
+						if (*itHelper == *itSup)
+							isTransitive = !isTransitive;
+
+					if (!isTransitive)
+					{
+						cout << "\nBINARY RELATION IS NOT TRANSITIVE.\n";
+						return false;
+					}
+				}
+			}
+		}
+	}	
+	cout << "\nBINARY RELATION IS TRANSITIVE.\n";
+	return true;
+}
+\end{lstlisting}
+
+\newpage
+
+\par \textbf{Результат тестирования программы определения свойства транзитивности.}
+
+\par Для демонстрации работы программы рассмотрим два произвольных бинарных отношения $ \rho $ и $ \delta $, 
+для одгого из которых свойство транзитивности выполняется, а для другого нет.
+\par Сгенерируем 8 пар элементов, соответствующих бинарному отношению $ \rho $. Получаем следующие пары: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/transitiveCheck/is_transitive_check.png}}
+	\caption{Пары элементов, находящихся в нетранзитивном бинарном отношении.}
+\end{figure}
+
+\par Как видно, данное отношение не является транзитивным. Посмотрим на выход программы:
+
+\begin{figure}[h]
+	\center{\includegraphics{/transitiveCheck/is_transitive_check_failed.png}}
+	\caption{Проверка на транзитивность не пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение не является транзитивным. Теперь рассмотрим 
+бинарное отношение $ \delta $, на котором свойство транзитивности выполняется. Перейдём на ручной ввод и 
+введём 8 пар элементов: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/transitiveCheck/transitive_binary_relation.png}}
+	\caption{Пары элементов, находящихся в транзитивном бинарном отношении.}
+\end{figure}
+
+\newpage
+
+\par Как видно, отношение является транзитивным. Посмотрим на выход программы: 
+
+\begin{figure}[h]
+	\center{\includegraphics{/transitiveCheck/is_transitive_check_success.png}}
+	\caption{Проверка на транзитивность пройдена.}
+\end{figure}
+
+\par Выход программы совпадает с тем фактом, что отношение является транзитивным.
+
+\newpage
+
+\subsection{Алгоритм классификации бинарных отношений.}
+
+Отдельно рассмотрим три функции, определяющих класс бинарного отношения, а именно: отношение эквивалентности,
+отношение порядка или отношение квазипорядка. Тогда алгоритм, содержащий в себе эти три функции, может 
+выглядеть следующим образом: \\
+\textbf{Вход:} список смежности бинарного отношения $ \rho $. \\
+\textbf{Выход:} строки <<Бинарное отношение является/не является отношением эквивалентности.>>, 
+<<Бинарное отношение является/не является отношением порядка.>>, <<Бинарное отношение является/не 
+является отношением квазипорядка.>> \\
+\textbf{Метод:} последовательно запускаем функции проверки принадлежности бинарного отношение к соответствующему
+классу. \\
+
+\par \textbf{Код программы, реализующей алгоритм классификации бинарных отношений.}
+
+\begin{lstlisting}[caption={Набор функций, осуществляющий классификацию бинарных отношений.}, mathescape]
+void isEquivalence(map<int, set<int>> binaryRelation)
+{
+	if (isReflexive(binaryRelation) && 
+			isSymmetric(binaryRelation) && 
+			isTransitive(binaryRelation))
+		cout << "\nBINARY RELATION IS AN EQUIVALENT RELATION.\n";
+	else
+		cout << "\nBINARY RELATION IS NOT AN EQUIVALENT RELATION.\n";
+}
+	
+void isOrder(map<int, set<int>> binaryRelation)
+{
+	if (isReflexive(binaryRelation) && 
+			isAntisymmetric(binaryRelation) && 
+			isTransitive(binaryRelation))
+		cout << "\BINARY RELATION IS AN ORDER RELATION.\n";
+	else
+		cout << "\BINARY RELATION IS NOT AN ORDER RELATION.\n";
+}
+	
+void isQuasi(map<int, set<int>> binaryRelation)
+{
+	if (isReflexive(binaryRelation) && 
+			isTransitive(binaryRelation))
+		cout << "\nBINARY RELATION IS A QUASI-ORDER RELATION.\n";
+	else
+		cout << "\nBINARY RELATION IS NOT A QUASI-ORDER RELATION.\n";
+}
+\end{lstlisting}
 
 \newpage
 
