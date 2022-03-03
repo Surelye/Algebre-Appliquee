@@ -1,4 +1,4 @@
-\documentclass[bachelor, och, pract4, times]{SCWorks}
+\documentclass[bachelor, och, pract4, times, hidelinks]{SCWorks}
 % параметр - тип обучения - одно из значений:
 %    spec     - специальность
 %    bachelor - бакалавриат (по умолчанию)
@@ -36,7 +36,6 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage[english,russian]{babel}
-
 % выделение ссылок цветом. чтобы включить- true
 \usepackage[colorlinks=false]{hyperref}
 
@@ -165,10 +164,11 @@
 \par \textbf{Определение.} Бинарное отношение $ \rho \subset A \times A $ 
 называется: \\
 1. \textit{рефлексивным}, если $ (a,\,a) \in \rho $ для всякого $ a \in A $; \\
-2. \textit{симметричным}, если $ (a,\,b) \in \rho \implies (b,\,a) \in \rho $; \\
+2. \textit{симметричным}, если $ (a,\,b) \in \rho \implies (b,\,a) \in \rho $ для всяких $ a, b \in A $; \\
 3. \textit{антисимметричным}, если $ (a,\,b) \in \rho $ и $ (b,\,a) \in \rho 
-\implies a = b $; \\
-4. \textit{транзитивным}, если $ (a,\,b) \in \rho $ и $ (b,\,c) \in \rho \implies (a,\,c) \in \rho $. \\
+\implies a = b $ для всяких $ a, b \in A $; \\
+4. \textit{транзитивным}, если $ (a,\,b) \in \rho $ и $ (b,\,c) \in \rho \implies (a,\,c) \in \rho $ для всяких
+$ a, b, c \in A $. \\
 
 Символом $ \Delta_A $ обозначается тождественное отношение на множестве $ A $, которое определяется по
 формуле: $$ \Delta_A = \{\,(a,\,a)\,|\, a \in A\,\}. $$
@@ -211,10 +211,10 @@
 
 \par \textbf{Лемма 2. О замыканиях бинарных отношений.} На множестве $ P(A^2) $ всех бинарных отношений 
 между элементами множества $ A $ следующие отображения являются операторами замыканий:
-\par 1) $ f_r(\rho) = \varrho \cup \Delta_A $ - наименьшее рефлексивное бинарное отношение, содержащее 
+\par 1) $ f_r(\rho) = \rho \cup \Delta_A $ - наименьшее рефлексивное бинарное отношение, содержащее 
 отношение $ \rho \subset A^2 $,
 
-\par 2) $ f_s(\rho) = \varrho \cup \varrho^{-1} $ - наименьшее симметричное бинарное отношение, содержащее 
+\par 2) $ f_s(\rho) = \rho \cup \rho^{-1} $ - наименьшее симметричное бинарное отношение, содержащее 
 отношение $ \rho \subset A^2 $,
 
 \par 3) $ f_t(\rho) = \bigcup\limits_{n=1}^{\infty}\rho^n $ - наименьшее транзитивное бинарное отношение, 
