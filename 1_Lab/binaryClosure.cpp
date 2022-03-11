@@ -6,9 +6,21 @@
 
 using namespace std;
 
-map<int, set<int>> getData(int numberOfPairs, map<int, set<int>> binaryRelation)
+map<int, set<int>> getData(int numberOfElements, int numberOfPairs, map<int, set<int>> binaryRelation)
 {
-    int i, firstEl, secondEl;
+    int i, placeholderEl, firstEl, secondEl;
+
+    cout << "NOW INPUT YOUR ELEMENTS:\n";
+
+    for (i = 0; i < numberOfElements; ++i)
+    {
+        cin >> placeholderEl;
+
+        set<int> placeholder;
+        binaryRelation[placeholderEl] = placeholder;
+    }
+
+    cout << "NOW INPUT YOUR PAIRS:\n";
 
     for (i = 0; i < numberOfPairs; ++i)
     {
@@ -51,7 +63,7 @@ map<int, set<int>> reflexiveClosure(map<int, set<int>> binaryRelation)
         binaryRelation[element.first].insert(element.first);
     }
 
-    for (auto element : binaryRelation)
+    /*for (auto element : binaryRelation)
     {
         it = element.second.begin();
 
@@ -62,7 +74,7 @@ map<int, set<int>> reflexiveClosure(map<int, set<int>> binaryRelation)
             if (binaryRelation[placeholder].empty())
                 binaryRelation[placeholder].insert(placeholder);
         }
-    }
+    }*/
 
     return binaryRelation;
 }
@@ -83,8 +95,8 @@ map<int, set<int>> symmetricClosure(map<int, set<int>> binaryRelation)
     return binaryRelation;
 }
 
-map<int, set<int>> transitiveClosure(map<int, set<int>> binaryRelation)
-{
+map<int, set<int>> transitiveClosureMachinery(map<int, set<int>> binaryRelation)
+{    
     set<int> ::iterator it, itHelper;
 
     for (auto element : binaryRelation)
@@ -101,11 +113,6 @@ map<int, set<int>> transitiveClosure(map<int, set<int>> binaryRelation)
     }
 
     return binaryRelation;
-}
-
-map<int, set<int>> equivalenceClosure(map<int, set<int>> binaryRelation)
-{
-    return transitiveClosure(symmetricClosure(reflexiveClosure(binaryRelation)));
 }
 
 bool isReflexive(map<int, set<int>> binaryRelation)
@@ -130,7 +137,7 @@ bool isReflexive(map<int, set<int>> binaryRelation)
             break;
     }
 
-    cout << "\n" << (isReflexive ? "\nBINARY RELATION IS REFLEXIVE.\n" : "\nBINARY RELATION IS NOT REFLEXIVE.\n");
+    cout << (isReflexive ? "BINARY RELATION IS REFLEXIVE.\n" : "BINARY RELATION IS NOT REFLEXIVE.\n");
     return isReflexive;
 }
 
@@ -158,13 +165,13 @@ bool isSymmetric(map<int, set<int>> binaryRelation)
             
             if (!isSymmetric)
             {
-                cout << "\nBINARY RELATION IS NOT SYMMETRIC.\n";
+                cout << "BINARY RELATION IS NOT SYMMETRIC.\n";
                 return false;
             }
         }
     }
 
-    cout << "\nBINARY RELATION IS SYMMETRIC.\n";
+    cout << "BINARY RELATION IS SYMMETRIC.\n";
     return true;
 }
 
@@ -192,13 +199,13 @@ bool isAntisymmetric(map<int, set<int>> binaryRelation)
 
             if (!isAntisymmetric)
             {
-                cout << "\nBINARY RELATION IS NOT ANTISYMMETRIC.\n";
+                cout << "BINARY RELATION IS NOT ANTISYMMETRIC.\n";
                 return false;
             }            
         }
     }
 
-    cout << "\nBINARY RELATION IS ANTISYMMETRIC.\n";
+    cout << "BINARY RELATION IS ANTISYMMETRIC.\n";
     return true;
 }
 
@@ -228,7 +235,7 @@ bool isTransitive(map<int, set<int>> binaryRelation)
 
                     if (!isTransitive)
                     {
-                        cout << "\nBINARY RELATION IS NOT TRANSITIVE.\n";
+                        cout << "BINARY RELATION IS NOT TRANSITIVE.\n";
                         return false;
                     }
                 }
@@ -236,32 +243,45 @@ bool isTransitive(map<int, set<int>> binaryRelation)
         }
     }
 
-    cout << "\nBINARY RELATION IS TRANSITIVE.\n";
+    cout << "BINARY RELATION IS TRANSITIVE.\n";
     return true;
 }
 
 void isEquivalence(map<int, set<int>> binaryRelation)
 {
     if (isReflexive(binaryRelation) && isSymmetric(binaryRelation) && isTransitive(binaryRelation))
-        cout << "\nBINARY RELATION IS AN EQUIVALENT RELATION.\n";
+        cout << "BINARY RELATION IS AN EQUIVALENT RELATION.\n";
     else
-        cout << "\nBINARY RELATION IS NOT AN EQUIVALENT RELATION.\n";
+        cout << "BINARY RELATION IS NOT AN EQUIVALENT RELATION.\n";
 }
 
 void isOrder(map<int, set<int>> binaryRelation)
 {
     if (isReflexive(binaryRelation) && isAntisymmetric(binaryRelation) && isTransitive(binaryRelation))
-        cout << "\BINARY RELATION IS AN ORDER RELATION.\n";
+        cout << "BINARY RELATION IS AN ORDER RELATION.\n";
     else
-        cout << "\BINARY RELATION IS NOT AN ORDER RELATION.\n";
+        cout << "BINARY RELATION IS NOT AN ORDER RELATION.\n";
 }
 
 void isQuasi(map<int, set<int>> binaryRelation)
 {
     if (isReflexive(binaryRelation) && isTransitive(binaryRelation))
-        cout << "\nBINARY RELATION IS A QUASI-ORDER RELATION.\n";
+        cout << "BINARY RELATION IS A QUASI-ORDER RELATION.\n";
     else
-        cout << "\nBINARY RELATION IS NOT A QUASI-ORDER RELATION.\n";
+        cout << "BINARY RELATION IS NOT A QUASI-ORDER RELATION.\n";
+}
+
+map<int, set<int>> transitiveClosure(map<int, set<int>> binaryRelation)
+{
+    while (!isTransitive(binaryRelation))
+        binaryRelation = transitiveClosureMachinery(binaryRelation);
+
+    return binaryRelation;
+}
+
+map<int, set<int>> equivalenceClosure(map<int, set<int>> binaryRelation)
+{
+    return transitiveClosure(symmetricClosure(reflexiveClosure(binaryRelation)));
 }
 
 map<int, set<int>> generateBinaryRelation(int numberOfPairs, int range, map<int, set<int>> binaryRelation)
@@ -289,41 +309,141 @@ map<int, set<int>> generateBinaryRelation(int numberOfPairs, int range, map<int,
     return binaryRelation;
 }
 
+map<int, set<int>> invokeFunction(int opNum, map<int, set<int>> binaryRelation)
+{
+    switch (opNum)
+    {
+        case 1:
+            cout << "RESULT OF OPERATION 1:\n";
+            isReflexive(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 2:
+            cout << "RESULT OF OPERATION 2:\n";
+            isSymmetric(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 3:
+            cout << "RESULT OF OPERATION 3:\n";
+            isAntisymmetric(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 4:
+            cout << "RESULT OF OPERATION 4:\n";
+            isTransitive(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 5:
+            cout << "RESULT OF OPERATION 5:\n";
+            isEquivalence(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 6:
+            cout << "RESULT OF OPERATION 6:\n";
+            isOrder(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 7:
+            cout << "RESULT OF OPERATION 7:\n";
+            isQuasi(binaryRelation);
+            cout << "\n";
+            break;
+
+        case 8:
+            cout << "RESULT OF OPERATION 8:\n";
+            binaryRelation = reflexiveClosure(binaryRelation);
+            cout << "ELEMENTS OF YOUR BINARY RELATION AFTER REFLEXIVE CLOSURE:\n";
+            displayBinaryRelation(binaryRelation);
+            cout << "\n\n";
+            break;
+
+        case 9:
+            cout << "RESULT OF OPERATION 9:\n";
+            binaryRelation = symmetricClosure(binaryRelation);
+            cout << "ELEMENTS OF YOUR BINARY RELATION AFTER SYMMETRIC CLOSURE:\n";
+            displayBinaryRelation(binaryRelation);
+            cout << "\n\n";
+            break;
+
+        case 10:
+            cout << "RESULT OF OPERATION 10:\n";
+            binaryRelation = transitiveClosure(binaryRelation);
+            cout << "ELEMENTS OF YOUR BINARY RELATION AFTER TRANSITIVE CLOSURE:\n";
+            displayBinaryRelation(binaryRelation);
+            cout << "\n\n";
+            break;
+
+        case 11:
+            cout << "RESULT OF OPERATION 11:\n";
+            binaryRelation = equivalenceClosure(binaryRelation);
+            cout << "ELEMENTS OF YOUR BINARY RELATION AFTER EQUIVALENCE CLOSURE:\n";
+            displayBinaryRelation(binaryRelation);
+            cout << "\n\n";
+            break;
+
+        default:
+            break;
+    }
+
+    return binaryRelation;
+}
+
+void opSwitch(map<int, set<int>> binaryRelation)
+{
+    vector<int> ops;
+    int i, placeholder = -1;
+
+    cout << " 1 - REFLEXIVE CHECK\n";
+    cout << " 2 - SYMMETRIC CHECK\n";
+    cout << " 3 - ANTISYMMETRIC CHECK\n";
+    cout << " 4 - TRANSITIVE CHECK\n";
+    cout << " 5 - EQUIVALENCE CHECK\n";
+    cout << " 6 - ORDER CHECK\n";
+    cout << " 7 - QUASI-ORDER CHECK\n";
+    cout << " 8 - REFLEXIVE CLOSURE\n";
+    cout << " 9 - SYMMETRIC CLOSURE\n";
+    cout << "10 - TRANSITIVE CLOSURE\n";
+    cout << "11 - EQUIVALENCE CLOSURE\n";
+    cout << " 0 - EXIT\n\n";
+
+    while (placeholder != 0)
+    {
+        cin >> placeholder;
+        ops.push_back(placeholder);
+    }
+
+    cout << "\n";
+
+    for (i = 0; i < ops.size(); ++i)
+        binaryRelation = invokeFunction(ops[i], binaryRelation);
+}
+
 int main()
 {
-    int numberOfPairs, range = 3;
+    int numberOfPairs, numberOfElements, range = 100;
     map<int, set<int>> binaryRelation;
 
+    cout << "INPUT THE NUMBER OF ELEMENTS IN YOUR BINARY RELATION:\n";
+    cin >> numberOfElements;
+    
     cout << "INPUT THE NUMBER OF PAIRS:\n";
     cin >> numberOfPairs;
-    cout << "NOW INPUT THE PAIRS:\n";
 
-    binaryRelation = generateBinaryRelation(numberOfPairs, range, binaryRelation);
-    displayBinaryRelation(binaryRelation);
-    
-    /*binaryRelation = getData(numberOfPairs, binaryRelation); 
-    cout << "\n\nTHE ELEMENTS OF YOUR BINARY RELATION ARE:\n";
-    displayBinaryRelation(binaryRelation);*/
-
-    /*binaryRelation = reflexiveClosure(binaryRelation);
-    cout << "\n\nTHE ELEMENTS OF YOUR BINARY RELATION AFTER REFLEXIVE CLOSURE ARE:\n";
-    displayBinaryRelation(binaryRelation);
-
-    binaryRelation = symmetricClosure(binaryRelation);
-    cout << "\n\nTHE ELEMENTS OF YOUR BINARY RELATION AFTER SYMMETRIC CLOSURE ARE:\n";
-    displayBinaryRelation(binaryRelation);
-
-    binaryRelation = transitiveClosure(binaryRelation);
-    cout << "\n\nTHE ELEMENTS OF YOUR BINARY RELATION AFTER TRANSITIVE CLOSURE ARE:\n";
+    /*binaryRelation = generateBinaryRelation(numberOfPairs, range, binaryRelation);
     displayBinaryRelation(binaryRelation);*/
     
-    isReflexive(binaryRelation);
+    binaryRelation = getData(numberOfElements, numberOfPairs, binaryRelation); 
+    cout << "\nTHE ELEMENTS OF YOUR BINARY RELATION ARE:\n";
+    displayBinaryRelation(binaryRelation);
+    cout << "\n\n";
 
-    /*isAntisymmetric(binaryRelation);
-
-    isSymmetric(binaryRelation);
-    
-    isTransitive(binaryRelation);*/
+    opSwitch(binaryRelation);
 
     return (EXIT_SUCCESS);
 }
