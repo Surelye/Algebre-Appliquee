@@ -3,10 +3,12 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 
 int matrixDimension;
+vector<char> attributeSet;
 
 void getMatrix(vector<vector<int>>& adjMatrix)
 {
@@ -270,24 +272,24 @@ vector<vector<int>> getEquivalenceClasses(vector<vector<int>> adjMatrix)
 {
 	int i;
 	vector<vector<int>> adjVectorTransposed, connectedComponents;
-	vector<vector<int>> adjVector = convertMatrixToAdjVector(adjMatrix);
+	vector<vector<int>> adjVector = convertMatrixToAdjVector (adjMatrix);
 	visited.assign(matrixDimension, false);
 
 	for (i = 0; i < matrixDimension; ++i)
 		if (!visited[i])
 			orderDFS(adjVector, i);
 
-	adjVectorTransposed = convertMatrixToAdjVector(transposeMatrix(adjMatrix));
-	visited.assign(matrixDimension, false);
-	reverse(exitOrder.begin(), exitOrder.end());
+	adjVectorTransposed = convertMatrixToAdjVector (transposeMatrix (adjMatrix));
+	visited.assign (matrixDimension, false);
+	reverse (exitOrder.begin (), exitOrder.end ());
 
 	for (i = 0; i < matrixDimension; ++i)
 	{
 		if (!visited[exitOrder[i]])
 		{
-			getComponentDFS(adjVectorTransposed, exitOrder[i]);
-			connectedComponents.push_back(component);
-			component.clear();
+			getComponentDFS (adjVectorTransposed, exitOrder[i]);
+			connectedComponents.push_back (component);
+			component.clear ();
 		}
 	}
 
@@ -298,22 +300,22 @@ int getMin(vector<int> component)
 {
 	int i, min = INT_MAX;
 
-	for (i = 0; i < component.size(); ++i)
+	for (i = 0; i < component.size (); ++i)
 		if (component[i] < min)
 			min = component[i];
 
 	return (min);
 }
 
-void getSystemOfRepresentatives(vector<vector<int>> adjMatrix)
+void getSystemOfRepresentatives (vector<vector<int>> adjMatrix)
 {
 	int i, j;
 	vector<int> systemOfRepresentatives;
-	vector<vector<int>> connectedComponents = getEquivalenceClasses(adjMatrix);
+	vector<vector<int>> connectedComponents = getEquivalenceClasses (adjMatrix);
 
 	cout << "FACTOR SET OF THIS BINARY RELATION IS:\n";
 
-	for (i = 0; i < connectedComponents.size(); ++i)
+	for (i = 0; i < connectedComponents.size (); ++i)
 	{
 		cout << "{ ";
 
@@ -324,7 +326,7 @@ void getSystemOfRepresentatives(vector<vector<int>> adjMatrix)
 	}
 	
 	for (i = 0; i < connectedComponents.size(); ++i)
-		systemOfRepresentatives.push_back(getMin(connectedComponents[i]));
+		systemOfRepresentatives.push_back(getMin (connectedComponents[i]));
 
 	cout << "\nSYSTEM OF REPRESENTATIVES OF THIS BINARY RELATION IS:\n";
 	
@@ -427,7 +429,7 @@ vector<int> getMins(vector<int> divisors)
 	return (mins);
 }
 
-void removeMins(vector<int>& divisors, vector<int> mins)
+void removeMins (vector<int>& divisors, vector<int> mins)
 {
 	int i;
 
@@ -437,7 +439,7 @@ void removeMins(vector<int>& divisors, vector<int> mins)
 
 		for (i = 0; i < divisors.size(); ++i)
 			if (divisors[i] == min)
-				divisors.erase(it + i);
+				divisors.erase (it + i);
 	}
 }
 
@@ -523,7 +525,7 @@ void printHasseDiagram(vector<vector<int>> HasseLevels, vector<vector<pair<int, 
 	}
 }
 
-void HasseDiagram()
+void HasseDiagram ()
 {
 	int numberX, i;
 	vector<int> divisors, mins;
@@ -533,51 +535,597 @@ void HasseDiagram()
 	cout << "INPUT YOU NUMBER:\n";
 	cin >> numberX;
 
-	divisors = getDivisors(numberX);
+	divisors = getDivisors (numberX);
 
-	while (!divisors.empty())
+	while (!divisors.empty ())
 	{
-		mins = getMins(divisors);
-		HasseLevels.push_back(mins);
-		removeMins(divisors, mins);
+		mins = getMins (divisors);
+		HasseLevels.push_back (mins);
+		removeMins (divisors, mins);
 	}
 	
-	HasseLevelConnections = getHasseConnections(HasseLevels);
-	printHasseDiagram(HasseLevels, HasseLevelConnections);
+	HasseLevelConnections = getHasseConnections (HasseLevels);
+	printHasseDiagram (HasseLevels, HasseLevelConnections);
 }
 
-void opSwitch(vector<int> ops)
+void cleanRows (vector<vector<int>>& matrix, vector<int> mins)
+{
+	int i;
+
+	for (int min : mins)
+		for (i = 0; i < matrixDimension; ++i)
+			if (matrix[min][i] == 1)
+				matrix[min][i] = 0;
+}
+
+void removeMinElts (vector<int>& elts, vector<int> mins)
+{
+	int i;
+
+	for (int min : mins)
+	{
+		auto it = elts.cbegin ();
+
+		for (i = 0; i < elts.size (); ++i)
+			if (elts[i] == min)
+				elts.erase (it + i);
+	}
+}
+
+bool inElements (vector<int> elements, int i)
+{
+	int j;
+
+	for (j = 0; j < elements.size (); ++j)
+		if (elements[j] == i)
+			return (true);
+
+	return (false);
+}
+
+vector<int> getMinsMatrix (vector<vector<int>> matrix, vector<int> elements)
+{
+	int i, j;
+	vector<int> mins;
+	
+	for (i = 0; i < matrixDimension; ++i)
+	{
+		bool isMin = true;
+
+		for (j = 0; j < matrixDimension; ++j)
+			if (matrix[j][i] == 1 && i != j)
+			{
+				isMin = false;
+				break;
+			}
+
+		if (isMin && inElements (elements, i))
+			mins.push_back (i);
+	}
+
+	return (mins);
+}
+
+void getHasseConnectionsMatrix (vector<vector<int>> matrix, vector<int> pLevel, vector<int> nLevel, vector<vector<pair<int, int>>>& levelsConnections)
+{
+	int i, j;
+	vector<pair<int, int>> levelConnections;
+
+	for (int pLvlElt : pLevel)	
+		for (int nLvlElt : nLevel)
+			if (matrix[pLvlElt][nLvlElt] == 1)
+				levelConnections.push_back (make_pair (pLvlElt + 1, nLvlElt + 1));	
+
+	levelsConnections.push_back (levelConnections);
+}
+
+void displayLevelsAndConnections (vector<vector<int>> HasseLevels, vector<vector<pair<int, int>>> HasseLevelConnections)
+{
+	int i, j;
+
+	cout << "\nHASSE DIAGRAM LEVELS:\n";
+
+	for (i = HasseLevels.size () - 1; i >= 0; --i)
+	{
+		for (j = 0; j < HasseLevels[i].size (); ++j)
+			cout << HasseLevels[i][j] + 1 << " ";
+
+		cout << "\n";
+	}
+
+	cout << "\nHASSE DIAGRAM CONNECTIONS:\n";
+
+	for (i = HasseLevelConnections.size () - 1; i >= 0; --i)
+	{
+		int levelSize = HasseLevelConnections[i].size ();
+
+		for (j = 0; j < HasseLevelConnections[i].size (); ++j)
+		{
+			pair<int, int> lvlElt = HasseLevelConnections[i][j];
+
+			cout << "(" << lvlElt.first << ", " << lvlElt.second << ")" << (j == levelSize - 1 ? "." : ", ");
+		}
+
+		cout << "\n";
+	}
+}
+
+void HasseDiagramMatrix ()
+{
+	int i;
+	vector<vector<int>> matrix, matrixCopy, HasseLevels;
+	vector<vector<pair<int, int>>> HasseLevelConnections;
+	vector<int> elements, mins;
+	cout << "INPUT MATRIX DIMENSION:\n";
+	cin >> matrixDimension;
+
+	getMatrix (matrix);
+
+	matrixCopy = matrix;
+
+	for (i = 0; i < matrix.size (); ++i)
+		elements.push_back (i);
+
+	while (!elements.empty ())
+	{
+		mins = getMinsMatrix (matrix, elements);
+		HasseLevels.push_back (mins);
+		removeMinElts (elements, mins);
+		cleanRows (matrix, mins);
+	}
+
+	for (i = 0; i < HasseLevels.size () - 1; ++i)	
+		getHasseConnectionsMatrix (matrixCopy, HasseLevels[i], HasseLevels[i + 1], HasseLevelConnections);
+	
+	displayLevelsAndConnections (HasseLevels, HasseLevelConnections);
+}
+
+void getObjectSet (vector<int>& objectSet)
+{
+	int i, elt;
+
+	for (i = 0; i < matrixDimension; ++i)
+	{
+		cin >> elt;
+		objectSet.push_back (elt);
+	}		
+}
+
+void getAttributeSet ()
+{
+	int i;
+	char elt;
+
+	for (i = 0; i < matrixDimension; ++i)
+	{
+		cin >> elt;
+		attributeSet.push_back (elt);
+	}
+}
+
+bool inGrid (vector<vector<int>> setGrid, vector<int> rowToCheck)
+{
+	int i;
+
+	for (i = 0; i < setGrid.size (); ++i)
+		if (rowToCheck == setGrid[i])
+			return (true);
+		
+	return (false);
+}
+
+vector<int> intersect (vector<int> lSet, vector<int> rSet)
+{
+	int i, j;
+	vector<int> intersection;
+
+	for (i = 0; i < lSet.size (); ++i)
+	{
+		for (j = 0; j < rSet.size (); ++j)
+			if (lSet[i] == rSet[j])
+				intersection.push_back (lSet[i]);
+	}
+
+	if (intersection.size () == 0)
+		intersection.push_back (-1);
+
+	return (intersection);
+}
+
+void getIntersects (vector<vector<int>>& setGrid)
+{
+	int i, j;
+
+	for (i = 1; i < setGrid.size (); ++i)
+	{
+		for (j = 1; j < setGrid.size (); ++j)
+		{
+			vector<int> intersection = intersect (setGrid[i], setGrid[j]);
+
+			if (i != j && !inGrid (setGrid, intersection))
+				setGrid.push_back (intersection);
+		}				
+	}
+}
+
+bool isSubset (vector<int> set, vector<int> possibleSubset)
+{
+	int i, j;
+
+	if (possibleSubset[0] == -1)
+		return (true);
+
+	for (i = 0; i < possibleSubset.size (); ++i)
+	{
+		bool flag = false;
+
+		for (j = 0; j < set.size (); ++j)
+			if (possibleSubset[i] == set[j])
+				flag = true;
+
+		if (!flag)
+			return (false);
+	}
+
+	return (true);
+}
+
+void getSubsetRelation (map<vector<int>, vector<vector<int>>>& subsetRelation, vector<vector<int>> setGrid)
+{
+	int i, j;
+
+	for (auto setAndSubsets : subsetRelation)
+	{
+		vector<vector<int>> subsets;
+
+		for (j = 0; j < setGrid.size (); ++j)
+			if (isSubset (setAndSubsets.first, setGrid[j]) && setAndSubsets.first != setGrid[j])
+				subsets.push_back (setGrid[j]);
+
+		subsetRelation[setAndSubsets.first] = subsets;
+	}
+}
+
+void displaySubsetRelation (map<vector<int>, vector<vector<int>>> subsetRelation)
+{
+	int i, j;
+
+	for (auto subsRelation : subsetRelation)
+	{
+		cout << "<";
+		int setSize = subsRelation.first.size ();
+
+		for (i = 0; i < setSize; ++i)
+			cout << subsRelation.first[i] << (i == setSize - 1 ? ">" : ", ");
+
+		cout << ": ";
+
+		for (i = 0; i < subsRelation.second.size (); ++i)
+		{
+			cout << "{";
+
+			int subsetSize = subsRelation.second[i].size ();
+
+			for (j = 0; j < subsetSize; ++j)
+				cout << subsRelation.second[i][j] << (j == subsetSize - 1 ? "}" : ", ");
+
+			cout << (i == subsRelation.second.size () - 1 ? "." : ", ");
+		}
+
+		cout << "\n";
+	}
+}
+
+vector<vector<int>> getMinsConcept (map<vector<int>, vector<vector<int>>> subsetRelation)
+{
+	int i;
+	vector<vector<int>> mins;
+
+	for (auto setAndSubsets : subsetRelation)
+	{
+		vector<int> set = setAndSubsets.first;
+
+		if (subsetRelation[set].empty ())
+			mins.push_back (set);
+	}
+
+	return (mins);
+}
+
+void removeMinsConcept (map<vector<int>, vector<vector<int>>>& subsetRelation, vector<vector<int>>& setGrid, vector<vector<int>> mins)
+{
+	int i;
+
+	for (vector<int> min : mins)
+	{
+		auto it = setGrid.cbegin ();
+
+		for (i = 0; i < setGrid.size (); ++i)
+			if (setGrid[i] == min)
+				setGrid.erase (it + i);
+	}
+
+	for (i = 0; i < mins.size (); ++i)
+		subsetRelation.erase (subsetRelation.find (mins[i]));
+}
+
+vector<char> getAttributeSetConceptMachinerie (int objectNum, vector<vector<int>> matrix)
+{
+	int i;
+	vector<char> objectAttributes;
+
+	for (i = 0; i < matrix.size (); ++i)
+		if (matrix[objectNum][i] == 1)
+			objectAttributes.push_back (attributeSet[i]);
+		
+	if (objectAttributes.empty ())
+		objectAttributes.push_back ('!');
+
+	return (objectAttributes);
+}
+
+vector<char> charIntersect (vector<char> lSet, vector<char> rSet)
+{
+	int i, j;
+	vector<char> intersection;
+
+	for (i = 0; i < lSet.size (); ++i)
+	{
+		for (j = 0; j < rSet.size (); ++j)
+			if (lSet[i] == rSet[j])
+				intersection.push_back (lSet[i]);
+	}
+
+	if (intersection.size () == 0)
+		intersection.push_back ('!');
+
+	return (intersection);
+}
+
+vector<char> getAttributeSetConcept (vector<int> HasseLevelSet, vector<vector<int>> matrix)
+{
+	int i;
+	vector<char> objectAttributeSet;
+
+	if (HasseLevelSet[0] == -1)
+		return (attributeSet);
+
+	for (i = 0; i < matrix.size (); ++i)
+		if (matrix[HasseLevelSet[0]][i] == 1)
+			objectAttributeSet.push_back (attributeSet[i]);
+
+	if (objectAttributeSet.empty ())
+	{
+		objectAttributeSet.push_back ('!');
+		return (objectAttributeSet);
+	}
+
+	for (i = 1; i < HasseLevelSet.size (); ++i)
+		objectAttributeSet = charIntersect (objectAttributeSet, getAttributeSetConceptMachinerie (HasseLevelSet[i], matrix));
+
+	if (objectAttributeSet.empty ())
+	{
+		objectAttributeSet.push_back ('!');
+		return (objectAttributeSet);
+	}
+
+	return (objectAttributeSet);
+}
+
+void displayConceptGrid (vector<vector<pair<vector<int>, vector<int>>>> HasseLevelsConnections, 
+						 vector<vector<pair<vector<int>, vector<char>>>> alignedAttributeSets)
+{
+	int i, j, k;
+
+	cout << "\nHASSE DIAGRAM:\n";
+
+	for (i = alignedAttributeSets.size () - 1; i >= 0; --i)
+	{
+		for (j = 0; j < alignedAttributeSets[i].size (); ++j)
+		{	
+			cout << "<";
+			for (k = 0; k < alignedAttributeSets[i][j].first.size (); ++k)
+				if (alignedAttributeSets[i][j].first[k] == -1)
+					cout << "EMPTY SET>";
+					else cout << alignedAttributeSets[i][j].first[k] + 1 << (k == alignedAttributeSets[i][j].first.size () - 1 ? ">" : ", ");
+
+			cout << " -> (";
+
+			for (k = 0; k < alignedAttributeSets[i][j].second.size (); ++k)
+				if (alignedAttributeSets[i][j].second[k] == '!')
+					cout << "EMPTY SET)";
+					else cout << alignedAttributeSets[i][j].second[k] << (k == alignedAttributeSets[i][j].second.size () - 1 ? ")" : ", ");
+
+			cout << (j == alignedAttributeSets[i].size () - 1 ? "." : ", ");
+		}
+
+		cout << '\n';
+	}
+
+	cout << "\nHASSE DIAGRAM CONNECTIONS:\n";
+
+	for (i = HasseLevelsConnections.size () - 1; i >= 0; --i)
+	{
+		for (j = 0; j < HasseLevelsConnections[i].size (); ++j)
+		{	
+			cout << "<";
+			for (k = 0; k < HasseLevelsConnections[i][j].first.size (); ++k)
+				if (HasseLevelsConnections[i][j].first[k] == -1)
+					cout << "EMPTY SET>";
+					else cout << HasseLevelsConnections[i][j].first[k] + 1 << (k == HasseLevelsConnections[i][j].first.size () - 1 ? ">" : ", ");
+
+			cout << " -> <";
+
+			for (k = 0; k < HasseLevelsConnections[i][j].second.size (); ++k)
+				if (HasseLevelsConnections[i][j].second[k] == -1)
+					cout << "EMPTY SET>";
+					else cout << HasseLevelsConnections[i][j].second[k] + 1 << (k == HasseLevelsConnections[i][j].second.size () - 1 ? ">" : ", ");
+
+			cout << (j == HasseLevelsConnections[i].size () - 1 ? "." : ", ");
+		}
+
+		cout << '\n';
+	}
+}
+
+void HasseAttributeSet (vector<vector<vector<int>>> HasseLevels, vector<vector<pair<vector<int>, vector<int>>>> HasseLevelsConnections,
+					    vector<vector<int>> matrix)
+{
+	int i, j;
+	vector<vector<pair<vector<int>, vector<char>>>> alignedAttributeSets;
+	vector<pair<vector<pair<vector<int>, vector<char>>>, vector<pair<vector<int>, vector<char>>>>> HasseConnections;
+
+	for (auto HasseLevel : HasseLevels)
+	{
+		vector<pair<vector<int>, vector<char>>> levelAlignedAttributeSets;
+
+		for (vector<int> set : HasseLevel)
+			levelAlignedAttributeSets.push_back (make_pair (set, getAttributeSetConcept (set, matrix)));
+
+		alignedAttributeSets.push_back (levelAlignedAttributeSets);
+	}
+
+	displayConceptGrid (HasseLevelsConnections, alignedAttributeSets);
+}
+
+vector<pair<vector<int>, vector<int>>> getHasseConnectionsConceptMachinerie (vector<vector<int>> pLevel, vector<vector<int>> nLevel)
+{
+	int i, j;
+	vector<pair<vector<int>, vector<int>>> levelConnections;
+
+	for (i = 0; i < pLevel.size (); ++i)
+	{
+		for (j = 0; j < nLevel.size (); ++j)
+			if (isSubset (nLevel[j], pLevel[i]))
+				levelConnections.push_back (make_pair (pLevel[i], nLevel[j]));
+	}
+
+	return (levelConnections);
+}
+
+void getHasseConnectionsConcept (vector<vector<vector<int>>> HasseLevels, vector<vector<pair<vector<int>, vector<int>>>>& HasseLevelsConnections)
+{
+	int i;
+
+	for (i = 0; i < HasseLevels.size () - 1; ++i)
+		HasseLevelsConnections.push_back (getHasseConnectionsConceptMachinerie (HasseLevels[i], HasseLevels[i + 1]));
+}
+
+void getHasseDiagramConceptGrid (vector<vector<int>>& closuredSetGrid, vector<vector<int>> matrix)
+{
+	int i;
+	vector<vector<int>> mins;
+	vector<vector<vector<int>>> HasseLevels;
+	vector<vector<pair<vector<int>, vector<int>>>> HasseLevelsConnections;
+	map<vector<int>, vector<vector<int>>> subsetRelation;
+
+	for (i = 0; i < closuredSetGrid.size (); ++i)
+	{
+		vector<vector<int>> subsets;
+
+		subsetRelation[closuredSetGrid[i]] = subsets;
+	}
+
+	while (!closuredSetGrid.empty ())
+	{
+		getSubsetRelation (subsetRelation, closuredSetGrid);
+		mins = getMinsConcept (subsetRelation);
+		HasseLevels.push_back (mins);
+		removeMinsConcept (subsetRelation, closuredSetGrid, mins);
+	}
+
+	getHasseConnectionsConcept (HasseLevels, HasseLevelsConnections);
+	HasseAttributeSet (HasseLevels, HasseLevelsConnections, matrix);
+}
+
+void getInverse (vector<vector<int>> matrix, vector<vector<int>>& closuredSetGrid)
+{
+	int i, j;
+	vector<int> inverseRow;
+
+	for (i = 0; i < matrixDimension; ++i)
+		inverseRow.push_back (i);
+	
+	closuredSetGrid.push_back (inverseRow);
+	inverseRow.clear ();
+
+	for (i = 0; i < matrixDimension; ++i)
+	{
+		for (j = 0; j < matrixDimension; ++j)
+			if (matrix[j][i] == 1)
+				inverseRow.push_back (j);
+
+		if (closuredSetGrid[0] != inverseRow)
+			closuredSetGrid.push_back (inverseRow);
+
+		inverseRow.clear ();
+	}
+
+	getIntersects (closuredSetGrid);
+}
+
+void conceptGrid ()
+{
+	vector<int> objectSet;
+	vector<vector<int>> matrix;
+	vector<vector<int>> closuredSetGrid;
+
+	cout << "INPUT MATRIX DIMENSION\n";
+	cin >> matrixDimension;
+
+	cout << "INPUT YOUR OBJECTS:\n";
+	getObjectSet (objectSet);
+
+	cout << "INPUT YOUR ATTRIBUTES:\n";
+	getAttributeSet ();
+	getMatrix (matrix);
+
+	getInverse (matrix, closuredSetGrid);
+	getHasseDiagramConceptGrid (closuredSetGrid, matrix);
+}
+
+void opSwitch (vector<int> ops)
 {
 	int i;
 	char choice = '.';
 	vector<vector<int>> adjMatrix;
 
-	for (i = 0; i < ops.size(); ++i)
+	for (i = 0; i < ops.size (); ++i)
 	{
 		switch (ops[i])
 		{
 			case 1:				
 				cout << "INPUT MATRIX DIMENSION:\n";
 				cin >> matrixDimension;
-				getMatrix(adjMatrix);				
-				equivalenceClosure(adjMatrix);
+				getMatrix (adjMatrix);				
+				equivalenceClosure (adjMatrix);
 				cout << "THE ELEMENTS OF YOUR MATRIX AFTER CLOSURE ARE:\n";
-				displayMatrix(adjMatrix);
+				displayMatrix (adjMatrix);
 				break;
 
 			case 2:
 				cout << "INPUT MATRIX DIMENSION:\n";
 				cin >> matrixDimension;
-				getMatrix(adjMatrix);
-				equivalenceClosure(adjMatrix);
+				getMatrix (adjMatrix);
+				equivalenceClosure (adjMatrix);
 				cout << "THE ELEMENTS OF YOUR MATRIX AFTER CLOSURE ARE:\n";
-				displayMatrix(adjMatrix);				
-				getSystemOfRepresentatives(adjMatrix);
+				displayMatrix (adjMatrix);				
+				getSystemOfRepresentatives (adjMatrix);
 				cout << "\n\n";
 				break;
 
 			case 3:
-				HasseDiagram();
+				HasseDiagram ();
+				cout << "\n";
+				break;
+
+			case 4:
+				HasseDiagramMatrix ();
+				cout << "\n";
+				break;
+
+			case 5:
+				conceptGrid ();
 				cout << "\n";
 
 			default:
@@ -603,7 +1151,9 @@ void opSelect()
 
 	cout << "1 - EQUIVALENCE CLOSURE\n";
 	cout << "2 - SYSTEM OF REPRESENTATIVES\n";
-	cout << "3 - HASSE DIAGRAM\n";
+	cout << "3 - HASSE DIAGRAM (NUMBER)\n";
+	cout << "4 - HASSE DIAGRAM (MATRIX)\n";
+	cout << "5 - CONCEPT GRID\n";
 	cout << "0 - EXIT\n\n";
 
 	while (input != 0)
