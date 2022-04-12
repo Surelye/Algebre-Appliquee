@@ -337,6 +337,185 @@ void transposeMatrix ()
     displayMatrix (resMatrix);
 }
 
+void getBinaryRelationMatrix (vector<vector<int>>& binRelMat)
+{
+    int i, j;
+
+    for (i = 0; i < matrixDimension; ++i)
+        for (j = 0; j < matrixDimension; ++j)
+            cin >> binRelMat[i][j];
+}
+
+vector<vector<int>> getBinaryRelationIntersection (vector<vector<int>> fM, vector<vector<int>> sM)
+{
+    int i, j;
+    vector<vector<int>> intersectionMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (i = 0; i < matrixDimension; ++i)
+        for (j = 0; j < matrixDimension; ++j)
+            intersectionMatrix[i][j] = ((fM[i][j] == 1) && (sM[i][j] == 1) ? 1 : 0);
+
+    return (intersectionMatrix);
+}
+
+void binaryRelationIntersect ()
+{
+    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRICES:\n";
+    cin >> matrixDimension;
+
+    vector<vector<int>> fBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        sBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        intersectMatrix;
+
+    cout << "INPUT THE FIRST BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (fBinRel);
+
+    cout << "INPUT THE SECOND BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (sBinRel);
+
+    intersectMatrix = getBinaryRelationIntersection (fBinRel, sBinRel);
+    
+    cout << "THE RESULT OF INTERSECTION OF YOUR BINARY RELATIONS IS:\n";
+    displayMatrix (intersectMatrix);
+}
+
+vector<vector<int>> getBinaryRelationUnion (vector<vector<int>> fM, vector<vector<int>> sM)
+{
+    int i, j;
+    vector<vector<int>> unionMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (i = 0; i < matrixDimension; ++i)
+        for (j = 0; j < matrixDimension; ++j)
+            unionMatrix[i][j] = ((fM[i][j] == 1) || (sM[i][j] == 1) ? 1 : 0);
+
+    return (unionMatrix);
+}
+
+void binaryRelationUnion ()
+{
+    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRICES:\n";
+    cin >> matrixDimension;
+
+    vector<vector<int>> fBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        sBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        unionMatrix;
+
+    cout << "INPUT THE FIRST BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (fBinRel);
+
+    cout << "INPUT THE SECOND BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (sBinRel);
+
+    unionMatrix = getBinaryRelationUnion (fBinRel, sBinRel);
+
+    cout << "THE RESULT OF UNION OF YOUR BINARY RELATIONS IS:\n";
+    displayMatrix (unionMatrix);
+}
+
+vector<vector<int>> getBinaryRelationComplement (vector<vector<int>> binRelMat)
+{
+    int i, j;
+    vector<vector<int>> complementMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (i = 0; i < matrixDimension; ++i)
+        for (j = 0; j < matrixDimension; ++j)
+            complementMatrix[i][j] = 1 - binRelMat[i][j];
+
+    return (complementMatrix);
+}
+
+void binaryRelationComplement ()
+{
+    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> matrixDimension;
+
+    vector<vector<int>> binRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        complementMatrix;
+
+    cout << "INPUT THE BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (binRel);
+
+    complementMatrix = getBinaryRelationComplement (binRel);
+
+    cout << "THE COMPLEMENT OF YOUR BINARY RELATIONS IS:\n";
+    displayMatrix (complementMatrix);
+}
+
+vector<vector<int>> transposeBinaryRelationMatrix (vector<vector<int>> binRelMat)
+{
+    int i, j;
+    vector<vector<int>> transposedMatrix;
+
+    for (i = 0; i < matrixDimension; ++i)
+    {
+        vector<int> column;
+
+        for (j = 0; j < matrixDimension; ++j)
+            column.push_back (binRelMat[j][i]);
+
+        transposedMatrix.push_back (column);
+    }
+
+    return (transposedMatrix);
+}
+
+void binaryRelationInverse ()
+{
+    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> matrixDimension;
+
+    vector<vector<int>> binRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        transposedMatrix;
+
+    cout << "INPUT THE BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (binRel);
+
+    transposedMatrix = transposeBinaryRelationMatrix (binRel);
+
+    cout << "THE COMPLEMENT OF YOUR BINARY RELATIONS IS:\n";
+    displayMatrix (transposedMatrix);
+}
+
+vector<vector<int>> getBinaryRelationMultiplication (vector<vector<int>> fBinRel, vector<vector<int>> sBinRel)
+{
+    int i, j, k, product;
+    vector<vector<int>> boolMultiplicationMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (i = 0; i < matrixDimension; ++i)
+        for (j = 0; j < matrixDimension; ++j)
+        {
+            product = 0;
+
+            for (k = 0; k < matrixDimension; ++k)
+                product += fBinRel[i][k] * sBinRel[k][j];
+
+            boolMultiplicationMatrix[i][j] = (product > 0 ? 1 : 0);
+        }
+
+    return (boolMultiplicationMatrix);
+}
+
+void binaryRelationMultiplication ()
+{
+    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRICES:\n";
+    cin >> matrixDimension;
+
+    vector<vector<int>> fBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        sBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+                        boolMultiplicationMatrix;
+
+    cout << "INPUT THE FIRST BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (fBinRel);
+
+    cout << "INPUT THE SECOND BINARY RELATION MATRIX:\n";
+    getBinaryRelationMatrix (sBinRel);
+
+    boolMultiplicationMatrix = getBinaryRelationMultiplication (fBinRel, sBinRel);
+
+    cout << "THE RESULT OF BINARY RELATION MULTIPLICATION IS:\n";
+    displayMatrix (boolMultiplicationMatrix);
+}
+
 void opSwitch (vector<int> ops)
 {
     int i;
@@ -349,6 +528,26 @@ void opSwitch (vector<int> ops)
 			case 1:				
 				checkProperties ();
 				break;
+
+            case 2:
+                binaryRelationUnion ();
+                break;
+
+            case 3:
+                binaryRelationIntersect ();
+                break;
+
+            case 4:
+                binaryRelationComplement ();
+                break;
+
+            case 5:
+                binaryRelationMultiplication ();
+                break;
+
+            case 6:
+                binaryRelationInverse ();
+                break;
 
             case 7:
                 matrixAddition ();
