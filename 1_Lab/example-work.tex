@@ -238,19 +238,11 @@ $ a, b, c \in A $. \\
 \par \textbf{Псевдокод алгоритма определения свойства рефлексивности.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-isReflexive(binaryRelation)
+isReflexive([<key, value>] binaryRelation)
 {
-	for element in binaryRelation
-	{
-		flag = false
-
-		for subelement in element:
-			if (subelement == element):			
-				flag = true
-			
-		if (!flag)
+	for key* in binaryRelation.keys()
+		if key* is not in binaryRelation[key*]
 			return false
-	}
 
 	return true
 }
@@ -356,19 +348,12 @@ T(\textit{isReflexive,\,n}) = O(n^2). $$
 \par \textbf{Псевдокод алгоритма определения свойства симметричности.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-isSymmetric(binaryRelation)
+isSymmetric([<key, value>] binaryRelation)
 {
-	for element in binaryRelation			
-		for subelement in element
-		{
-			flag = false
-
-			if element in binaryRelation[subelement]
-				flag = true
-
-			if (!flag)
+	for key* in binaryRelation.keys()
+		for value* in binaryRelation[key*]
+			if key* is not in binaryRelation[value*]
 				return false
-		}
 
 	return true
 }
@@ -484,24 +469,14 @@ $ b_i $ - петля. \\
 \par \textbf{Псевдокод алгоритма определения свойства антисимметричности.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-isAntisymmetric(binaryRelation)
+isAntisymmetric([<key, value>] binaryRelation)
 {	
-	for element in binaryRelation:	
-		for subelement in element
-		{
-			isAntisymmetric = true
-
-			if subelement is not element
-			{
-				for elt in binaryRelation[subelement]
-					if (elt == element)
-						isAntisymmetric = false
-			}
+	for key* in binaryRelation.keys()
+		for value* in binaryRelation[key*]
+			if value* is not key*
+				if key* in binaryRelation[value*]
+					return false
 	
-			if (!isAntisymmetric)			
-				return false
-		}
-
 	return true
 }
 \end{lstlisting}
@@ -612,22 +587,14 @@ bool isAntisymmetric(map<int, set<int>> binaryRelation)
 \par \textbf{Псевдокод алгоритма определения свойства транзитивности.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-isTransitive(binaryRelation)
+isTransitive([<key, value>] binaryRelation)
 {	
-	for element in binaryRelation:	
-		for subelement in element:		
-			for elt in binaryRelation[subelement]
-			{
-				isTransitive = false
-
-				for eltSup in element:
-					if (elt == eltSup)
-						isTransitive = true
-
-				if (!isTransitive)				
-					return false				
-			}	
-
+	for key* in binaryRelation.keys()
+		for value* in binaryRelation[key*]
+			for value** in binaryRelation[value*]
+				if value** is not in binaryRelation[key*]
+					return false
+					
 	return true
 }
 \end{lstlisting}
@@ -908,13 +875,11 @@ $T(\textit{isEquivalence},\,n) = T(\textit{isOrder},\,n) = T(\textit{isQuasi},\,
 \par \textbf{Псевдокод алгоритма построения рефлексивного замыкания бинарного отношения.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-reflexiveClosure(binaryRelation)
+reflexiveClosure([<key, value>] binaryRelation)
 {
-	for element in binaryRelation
-	{
-		placeholder = element
-		binaryRelation[element].insert(element);
-	}
+	for key* in binaryRelation.keys()
+		if key* is not in binaryRelation[key*]
+			binaryRelation[key*].insert(key*)
 	
 	return binaryRelation;
 }
@@ -985,11 +950,12 @@ $ T(\textit{reflexiveClosure},\, n) = O(n\log n) $.
 \par \textbf{Псевдокод алгоритма построения симметричного замыкания бинарного отношения.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-symmetricClosure(binaryRelation)
+symmetricClosure([<key, value>] binaryRelation)
 {
-	for element in binaryRelation:
-		for subelement in element:
-			binaryRelation[subelement].insert(element)
+	for key* in binaryRelation.keys()
+		for value* in binaryRelation[key*]
+			if key* is not in binaryRelation[value*]
+				binaryRelation[value*].insert(key*)
 	
 	return binaryRelation;
 }
@@ -1062,19 +1028,19 @@ T(\textit{symmetricClosure},\, n) = O(n^2\log n). $$
 \par \textbf{Псевдокод алгоритма построения транзитивного замыкания бинарного отношения.}
 
 \begin{lstlisting}[caption=Псевдокод алгоритма., mathescape]
-transitiveClosureMachinery(binaryRelation)
+transitiveClosureMachinery([<key, value>] binaryRelation)
 {
-	for element in binaryRelation:
-		for subelement in element:
-			for elt in binaryRelation[subelement]:
-				binaryRelation[element].insert(elt);            
+	for key* in binaryRelation.keys()
+		for value* in binaryRelation[key*]
+			for value** in binaryRelation[value*]:
+				if value** is not in binaryRelation[key*]
+					binaryRelation[key*].insert(value**);
 		
 	return binaryRelation;
 }
-
 transitiveClosure(binaryRelation)
 {
-    while (!isTransitive(binaryRelation))
+    while !isTransitive(binaryRelation)
         binaryRelation = 
 					transitiveClosureMachinery(binaryRelation);
     return binaryRelation;
