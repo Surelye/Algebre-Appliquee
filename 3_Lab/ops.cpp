@@ -153,12 +153,6 @@ void checkProperties ()
     cout << "INPUT MATRIX ELEMENTS:\n";
     getMatrix (CayleyTable);
 
-    cout << '\n';
-
-    displayCayleyTable (CayleyTable);
-
-    cout << '\n';
-
     if (checkAssociativity (CayleyTable))
         cout << "OPERATION IS ASSOCIATIVE.\n";
     else cout << "OPERATION IS NOT ASSOCIATIVE.\n";
@@ -170,6 +164,8 @@ void checkProperties ()
     if (checkIdempotency (CayleyTable))
         cout << "OPERATION IS IDEMPOTENT.\n";
     else cout << "OPERATION IS NOT IDEMPOTENT.\n";
+
+
 }
 
 void getMatrixFiniteField (vector<vector<int>>& matrix, int fieldOrder, int fDim, int sDim)
@@ -516,6 +512,279 @@ void binaryRelationMultiplication ()
     displayMatrix (boolMultiplicationMatrix);
 }
 
+vector<vector<int>> getMinor (int columnIdx, vector<vector<int>> matrix)
+{
+    int i, j;
+    vector<vector<int>> minor;
+
+    for (i = 1; i < matrix.size(); ++i)
+    {
+        vector<int> row;
+
+        for (j = 0; j < matrix.size(); ++j)
+            if (j != columnIdx)
+                row.push_back (matrix[i][j]);
+
+        minor.push_back (row);
+    }
+
+    return (minor);
+}
+
+int computeDet (vector<vector<int>> matrix)
+{
+    if (matrix.size() == 1)
+        return (matrix[0][0]);
+
+    int det = 0, multiplier = 1, i;
+
+    for (i = 0; i < matrix.size(); ++i)
+    {
+        int elt = matrix[0][i];
+
+        if (elt != 0)
+            det += multiplier * elt * computeDet (getMinor (i, matrix));
+        
+        multiplier *= -1;
+    }
+
+    return (det);
+}
+
+void gcdExtended (int a, int b, int& x, int& y)
+{
+    if (a == 0) { x = 0; y = 1; return; }
+
+    int x_1, y_1;
+    gcdExtended (b % a, a, x_1, y_1);
+
+    x = y_1 - (b / a) * x_1;
+    y = x_1;
+
+    return;
+}
+
+vector<vector<int>> getMinorExtended (vector<vector<int>> matrix, int rowIdx, int colIdx)
+{
+    int i, j, matrixSize = matrix.size ();
+    vector<vector<int>> minor;
+
+    for (i = 0; i < matrixSize; ++i)
+    {
+        if (i == rowIdx) continue;
+        vector<int> row;
+
+        for (j = 0; j < matrixSize; ++j)
+        {
+            if (j == colIdx) continue;
+            row.push_back (matrix[i][j]);
+        }
+
+        minor.push_back (row);
+    }
+
+    return (minor);
+}
+
+vector<vector<int>> getConjugateMatrix (vector<vector<int>> matrix)
+{
+    int i, j;
+    short sign = 1;
+    vector<vector<int>> conjugateMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (i = 0; i < matrixDimension; ++i)    
+        for (j = 0; j < matrixDimension; ++j)
+        {
+            conjugateMatrix[i][j] = sign * computeDet (getMinorExtended (matrix, i, j));
+            sign *= -1;
+        }
+    
+
+    return (transposeMatrixMachinerie (conjugateMatrix));
+}
+
+void reduceMatrix (vector<vector<int>>& matrix, int fieldOrder, int detInverse)
+{
+    int i, j;
+
+    for (i = 0; i < matrix.size (); ++i)
+        for (j = 0; j < matrix.size (); ++j)
+        {
+            matrix[i][j] *= detInverse;
+            matrix[i][j] %= fieldOrder;
+
+            if (matrix[i][j] < 0)
+                matrix[i][j] += fieldOrder;
+        }
+}
+
+void invertMatrix ()
+{
+    unsigned int fieldOrder;
+    int det, detInverse = 0, dummyVariable = 0;
+    vector<vector<int>> inputMatrix, conjugateMatrix;
+
+    cout << "INPUT THE DIMENSION OF YOUR MATRIX:\n";
+    cin >> matrixDimension;
+
+    cout << "INPUT THE FIELD ORDER:\n";
+    cin >> fieldOrder;
+
+    cout << "INPUT YOUR MATRIX:\n";
+    getMatrix (inputMatrix);
+    
+    det = computeDet (inputMatrix);
+    while (det < 0)
+        det += fieldOrder;
+    
+    gcdExtended (det, fieldOrder, detInverse, dummyVariable);
+    conjugateMatrix = getConjugateMatrix (inputMatrix);
+    reduceMatrix (conjugateMatrix, fieldOrder, detInverse);
+
+    cout << "INVERSE MATRIX IS:\n";
+    displayMatrix (conjugateMatrix);
+}
+
+void displayLeftCayleyTablesDistrib (vector<vector<int>> lT, vector<vector<int>> rT, int curEl)
+{
+    int i, j;
+
+    cout << "x * (b + c) TABLE FOR ELEMENT " << curEl << ":\n";
+    for (i = 0; i < matrixDimension; ++i)
+    {
+        for (j = 0; j < matrixDimension; ++j)
+            cout << lT[i][j] << " ";
+        cout << '\n';
+    }
+
+    cout << "(x * b) + (x * c) TABLE FOR ELEMENT " << curEl << ":\n";
+    for (i = 0; i < matrixDimension; ++i)
+    {
+        for (j = 0; j < matrixDimension; ++j)
+            cout << rT[i][j] << " ";
+        cout << '\n';
+    }
+}
+
+bool constructLeftTables (vector<vector<int>> mCT, vector<vector<int>> aCT, int curEl)
+{
+    int j, k;
+    vector<vector<int>> lTable (matrixDimension, vector<int> (matrixDimension, 0)), 
+                        rTable (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (j = 0; j < matrixDimension; ++j)
+        for (k = 0; k < matrixDimension; ++k)
+        {
+            lTable[j][k] = mCT[curEl][aCT[j][k]];
+            rTable[j][k] = aCT[mCT[curEl][j]][mCT[curEl][k]];
+        }
+
+    // displayLeftCayleyTablesDistrib (lTable, rTable, curEl);
+
+    return (lTable == rTable);
+}
+
+void displayRightCayleyTablesDistrib (vector<vector<int>> lT, vector<vector<int>> rT, int curEl)
+{
+    int i, j;
+
+    cout << "(b + c) * x TABLE FOR ELEMENT " << curEl << ":\n";
+    for (i = 0; i < matrixDimension; ++i)
+    {
+        for (j = 0; j < matrixDimension; ++j)
+            cout << lT[i][j] << " ";
+        cout << '\n';
+    }
+
+    cout << "(b * x) + (c * x) TABLE FOR ELEMENT " << curEl << ":\n";
+    for (i = 0; i < matrixDimension; ++i)
+    {
+        for (j = 0; j < matrixDimension; ++j)
+            cout << rT[i][j] << " ";
+        cout << '\n';
+    }
+}
+
+bool constructRightTables (vector<vector<int>> mCT, vector<vector<int>> aCT, int curEl)
+{
+    int j, k;
+    vector<vector<int>> lTable (matrixDimension, vector<int> (matrixDimension, 0)), 
+                        rTable (matrixDimension, vector<int> (matrixDimension, 0));
+
+    for (j = 0; j < matrixDimension; ++j)
+        for (k = 0; k < matrixDimension; ++k)
+        {
+            lTable[j][k] = mCT[aCT[j][k]][curEl];
+            rTable[j][k] = aCT[mCT[j][curEl]][mCT[k][curEl]];
+        }
+
+    // displayRightCayleyTablesDistrib (lTable, rTable, curEl);
+
+    return (lTable == rTable);
+}
+
+void checkDistributivityMachinerie (vector<vector<int>> mCT, vector<vector<int>> aCT) // multiplication Cayley table, addition Cayley table
+{
+    int i, j, k;
+    bool flagL = true, flagR = true;
+
+    if (checkCommutativity (mCT))
+    {
+        for (i = 0; i < matrixDimension; ++i)
+            if (!constructLeftTables (mCT, aCT, i))
+            {
+                cout << "OPERATION IS NOT DISTRIBUTIVE.\n";
+                return;
+            }
+
+        cout << "OPERATION IS DISTRIBUTIVE.\n";
+    }
+    else 
+    {
+        for (i = 0; i < matrixDimension; ++i)
+            if (!constructLeftTables (mCT, aCT, i))
+            {
+                cout << "OPERATION IS NOT LEFT-DISTRIBUTIVE.\n";
+                flagL = false;
+                break;
+            }
+        
+        if (flagL)
+            cout << "OPERATION IS LEFT-DISTRIBUTIVE.\n";
+
+        for (i = 0; i < matrixDimension; ++i)
+            if (!constructRightTables (mCT, aCT, i))
+            {
+                cout << "OPERATION IS NOT RIGHT-DISTRIBUTIVE.\n";
+                flagR = false;
+                break;
+            }
+
+        if (flagR)
+            cout << "OPERATION IS RIGHT-DISTRIBUTIVE.\n";
+
+        if (flagL && flagR)
+            cout << "OPERATION IS DISTRIBUTIVE.\n";
+    }
+}
+
+void checkDistributivity ()
+{
+    int i;
+    vector<vector<int>> multOpCayleyTable, addOpCayleyTable;
+
+    cout << "INPUT MATRIX DIMENSION:\n";
+    cin >> matrixDimension;
+
+    cout << "INPUT THE CAYLEY TABLE OF THE MULTIPLICATION (*) OPERATION:\n"; // x * (y + z)
+    getMatrix (multOpCayleyTable);
+
+    cout << "INPUT THE CAYLEY TABLE OF THE ADDITION (+) OPERATION:\n";
+    getMatrix (addOpCayleyTable);
+
+    checkDistributivityMachinerie (multOpCayleyTable, addOpCayleyTable);
+}
+
 void opSwitch (vector<int> ops)
 {
     int i;
@@ -530,35 +799,43 @@ void opSwitch (vector<int> ops)
 				break;
 
             case 2:
-                binaryRelationUnion ();
+                checkDistributivity ();
                 break;
 
             case 3:
-                binaryRelationIntersect ();
+                binaryRelationUnion ();
                 break;
 
             case 4:
-                binaryRelationComplement ();
+                binaryRelationIntersect ();
                 break;
 
             case 5:
-                binaryRelationMultiplication ();
+                binaryRelationComplement ();
                 break;
 
             case 6:
-                binaryRelationInverse ();
+                binaryRelationMultiplication ();
                 break;
 
             case 7:
-                matrixAddition ();
+                binaryRelationInverse ();
                 break;
 
             case 8:
-                matrixMultiplication ();
+                matrixAddition ();
                 break;
 
             case 9:
+                matrixMultiplication ();
+                break;
+
+            case 10:
                 transposeMatrix ();
+                break;
+
+            case 11:
+                invertMatrix ();
                 break;
 
 			default:
@@ -583,25 +860,26 @@ void opSelect ()
 	vector<int> ops;
 
 	cout << " 1 - CHECK PROPERTIES\n";
-    cout << " 2 - RELATION UNION\n";
-    cout << " 3 - RELATION INTERSECT\n";
-    cout << " 4 - RELATION COMPLEMENT\n";
-    cout << " 5 - RELATION MULTIPLICATION\n";
-    cout << " 6 - RELATION INVERSE\n";
-    cout << " 7 - MATRIX ADDITION\n";
-    cout << " 8 - MATRIX MULTIPLICATION\n";
-    cout << " 9 - TRANSPOSE MATRIX\n";
-    cout << "10 - INVERT MATRIX\n";
+    cout << " 2 - CHECK DISTRIBUTIVITY\n";
+    cout << " 3 - RELATION UNION\n";
+    cout << " 4 - RELATION INTERSECT\n";
+    cout << " 5 - RELATION COMPLEMENT\n";
+    cout << " 6 - RELATION MULTIPLICATION\n";
+    cout << " 7 - RELATION INVERSE\n";
+    cout << " 8 - MATRIX ADDITION\n";
+    cout << " 9 - MATRIX MULTIPLICATION\n";
+    cout << "10 - TRANSPOSE MATRIX\n";
+    cout << "11 - INVERT MATRIX\n";
 	cout << " 0 - EXIT\n\n";
 
 	while (input != 0)
 	{
 		cin >> input;
-		ops.push_back(input);
+		ops.push_back (input);
 	}
 	cout << "\n";
 
-	opSwitch(ops);
+	opSwitch (ops);
 }
 
 int main ()
