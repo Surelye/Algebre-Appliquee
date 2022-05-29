@@ -337,18 +337,18 @@ void getBinaryRelationMatrix (vector<vector<int>>& binRelMat)
 {
     int i, j;
 
-    for (i = 0; i < matrixDimension; ++i)
-        for (j = 0; j < matrixDimension; ++j)
+    for (i = 0; i < binRelMat.size (); ++i)
+        for (j = 0; j < binRelMat[i].size (); ++j)
             cin >> binRelMat[i][j];
 }
 
 vector<vector<int>> getBinaryRelationIntersection (vector<vector<int>> fM, vector<vector<int>> sM)
 {
-    int i, j;
-    vector<vector<int>> intersectionMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+    int i, j, rowsNum = fM.size (), colsNum = fM[0].size ();
+    vector<vector<int>> intersectionMatrix (rowsNum, vector<int> (colsNum, 0));
 
-    for (i = 0; i < matrixDimension; ++i)
-        for (j = 0; j < matrixDimension; ++j)
+    for (i = 0; i < rowsNum; ++i)
+        for (j = 0; j < colsNum; ++j)
             intersectionMatrix[i][j] = ((fM[i][j] == 1) && (sM[i][j] == 1) ? 1 : 0);
 
     return (intersectionMatrix);
@@ -356,11 +356,16 @@ vector<vector<int>> getBinaryRelationIntersection (vector<vector<int>> fM, vecto
 
 void binaryRelationIntersect ()
 {
-    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRICES:\n";
-    cin >> matrixDimension;
+    unsigned short fDim, sDim;
 
-    vector<vector<int>> fBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
-                        sBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+    cout << "INPUT THE FIRST DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> fDim;
+
+    cout << "INPUT THE SECOND DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> sDim;
+
+    vector<vector<int>> fBinRel (fDim, vector<int> (sDim, 0)),
+                        sBinRel (fDim, vector<int> (sDim, 0)),
                         intersectMatrix;
 
     cout << "INPUT THE FIRST BINARY RELATION MATRIX:\n";
@@ -377,11 +382,11 @@ void binaryRelationIntersect ()
 
 vector<vector<int>> getBinaryRelationUnion (vector<vector<int>> fM, vector<vector<int>> sM)
 {
-    int i, j;
-    vector<vector<int>> unionMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+    int i, j, rowsNum = fM.size (), colsNum = fM[0].size ();
+    vector<vector<int>> unionMatrix (rowsNum, vector<int> (colsNum, 0));
 
-    for (i = 0; i < matrixDimension; ++i)
-        for (j = 0; j < matrixDimension; ++j)
+    for (i = 0; i < rowsNum; ++i)
+        for (j = 0; j < colsNum; ++j)
             unionMatrix[i][j] = ((fM[i][j] == 1) || (sM[i][j] == 1) ? 1 : 0);
 
     return (unionMatrix);
@@ -389,11 +394,16 @@ vector<vector<int>> getBinaryRelationUnion (vector<vector<int>> fM, vector<vecto
 
 void binaryRelationUnion ()
 {
-    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRICES:\n";
-    cin >> matrixDimension;
+    unsigned short fDim, sDim;
 
-    vector<vector<int>> fBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
-                        sBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+    cout << "INPUT THE FIRST DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> fDim;
+
+    cout << "INPUT THE SECOND DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> sDim;
+
+    vector<vector<int>> fBinRel (fDim, vector<int> (sDim, 0)),
+                        sBinRel (fDim, vector<int> (sDim, 0)),
                         unionMatrix;
 
     cout << "INPUT THE FIRST BINARY RELATION MATRIX:\n";
@@ -410,11 +420,11 @@ void binaryRelationUnion ()
 
 vector<vector<int>> getBinaryRelationComplement (vector<vector<int>> binRelMat)
 {
-    int i, j;
-    vector<vector<int>> complementMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+    int i, j, rowsNum = binRelMat.size (), colsNum = binRelMat[0].size ();
+    vector<vector<int>> complementMatrix (rowsNum, vector<int> (colsNum, 0));
 
-    for (i = 0; i < matrixDimension; ++i)
-        for (j = 0; j < matrixDimension; ++j)
+    for (i = 0; i < rowsNum; ++i)
+        for (j = 0; j < colsNum; ++j)
             complementMatrix[i][j] = 1 - binRelMat[i][j];
 
     return (complementMatrix);
@@ -422,10 +432,15 @@ vector<vector<int>> getBinaryRelationComplement (vector<vector<int>> binRelMat)
 
 void binaryRelationComplement ()
 {
-    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
-    cin >> matrixDimension;
+    unsigned short fDim, sDim;
 
-    vector<vector<int>> binRel (matrixDimension, vector<int> (matrixDimension, 0)),
+    cout << "INPUT THE FIRST DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> fDim;
+
+    cout << "INPUT THE SECOND DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> sDim;
+
+    vector<vector<int>> binRel (fDim, vector<int> (sDim, 0)),
                         complementMatrix;
 
     cout << "INPUT THE BINARY RELATION MATRIX:\n";
@@ -442,11 +457,11 @@ vector<vector<int>> transposeBinaryRelationMatrix (vector<vector<int>> binRelMat
     int i, j;
     vector<vector<int>> transposedMatrix;
 
-    for (i = 0; i < matrixDimension; ++i)
+    for (i = 0; i < binRelMat[0].size (); ++i)
     {
         vector<int> column;
 
-        for (j = 0; j < matrixDimension; ++j)
+        for (j = 0; j < binRelMat.size (); ++j)
             column.push_back (binRelMat[j][i]);
 
         transposedMatrix.push_back (column);
@@ -457,10 +472,15 @@ vector<vector<int>> transposeBinaryRelationMatrix (vector<vector<int>> binRelMat
 
 void binaryRelationInverse ()
 {
-    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
-    cin >> matrixDimension;
+    unsigned short fDim, sDim;
 
-    vector<vector<int>> binRel (matrixDimension, vector<int> (matrixDimension, 0)),
+    cout << "INPUT THE FIRST DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> fDim;
+
+    cout << "INPUT THE SECOND DIMENSION OF YOUR BINARY RELATION MATRIX:\n";
+    cin >> sDim;
+
+    vector<vector<int>> binRel (fDim, vector<int> (sDim, 0)),
                         transposedMatrix;
 
     cout << "INPUT THE BINARY RELATION MATRIX:\n";
@@ -474,15 +494,15 @@ void binaryRelationInverse ()
 
 vector<vector<int>> getBinaryRelationMultiplication (vector<vector<int>> fBinRel, vector<vector<int>> sBinRel)
 {
-    int i, j, k, product;
-    vector<vector<int>> boolMultiplicationMatrix (matrixDimension, vector<int> (matrixDimension, 0));
+    int i, j, k, product, rowsNum = fBinRel.size (), colsNum = sBinRel[0].size ();
+    vector<vector<int>> boolMultiplicationMatrix (rowsNum, vector<int> (colsNum, 0));
 
-    for (i = 0; i < matrixDimension; ++i)
-        for (j = 0; j < matrixDimension; ++j)
+    for (i = 0; i < rowsNum; ++i)
+        for (j = 0; j < colsNum; ++j)
         {
             product = 0;
 
-            for (k = 0; k < matrixDimension; ++k)
+            for (k = 0; k < fBinRel[0].size (); ++k)
                 product += fBinRel[i][k] * sBinRel[k][j];
 
             boolMultiplicationMatrix[i][j] = (product > 0 ? 1 : 0);
@@ -493,11 +513,28 @@ vector<vector<int>> getBinaryRelationMultiplication (vector<vector<int>> fBinRel
 
 void binaryRelationMultiplication ()
 {
-    cout << "INPUT THE DIMENSION OF YOUR BINARY RELATION MATRICES:\n";
-    cin >> matrixDimension;
+    unsigned short fMatFDim, fMatSDim, sMatFDim, sMatSDim;
 
-    vector<vector<int>> fBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
-                        sBinRel (matrixDimension, vector<int> (matrixDimension, 0)),
+    cout << "INPUT THE FIRST DIMENSION OF YOUR FIRST BINARY RELATION MATRIX:\n";
+    cin >> fMatFDim;
+
+    cout << "INPUT THE SECOND DIMENSION OF YOUR FIRST BINARY RELATION MATRIX:\n";
+    cin >> fMatSDim;
+
+    cout << "INPUT THE FIRST DIMENSION OF YOUR SECOND BINARY RELATION MATRIX:\n";
+    cin >> sMatFDim;
+
+    cout << "INPUT THE SECOND DIMENSION OF YOUR SECOND BINARY RELATION MATRIX:\n";
+    cin >> sMatSDim;
+
+    if (fMatSDim != sMatFDim)
+    {
+        cout << "THE SECOND DIMENSION OF YOUR FIRST BINARY RELATION MATRIX DOES NOT CORRESPOND TO THE FIRST DIMENSION OF YOUR SECOND BINARY RELATION MATRIX. MATRIX MULTIPLICATION CANNOT BE FOUND.\n";
+        return;
+    }
+
+    vector<vector<int>> fBinRel (fMatFDim, vector<int> (fMatSDim, 0)),
+                        sBinRel (sMatFDim, vector<int> (sMatSDim, 0)),
                         boolMultiplicationMatrix;
 
     cout << "INPUT THE FIRST BINARY RELATION MATRIX:\n";
@@ -590,15 +627,18 @@ vector<vector<int>> getConjugateMatrix (vector<vector<int>> matrix)
 {
     int i, j;
     short sign = 1;
+    bool evenDimensionFlag = (matrix.size () % 2 == 0);
     vector<vector<int>> conjugateMatrix (matrixDimension, vector<int> (matrixDimension, 0));
 
-    for (i = 0; i < matrixDimension; ++i)    
+    for (i = 0; i < matrixDimension; ++i)
+    {
         for (j = 0; j < matrixDimension; ++j)
         {
             conjugateMatrix[i][j] = sign * computeDet (getMinorExtended (matrix, i, j));
             sign *= -1;
         }
-    
+        sign *= (evenDimensionFlag ? -1 : 1);
+    }
 
     return (transposeMatrixMachinerie (conjugateMatrix));
 }
@@ -632,11 +672,18 @@ void invertMatrix ()
 
     cout << "INPUT YOUR MATRIX:\n";
     getMatrix (inputMatrix);
-    
+
     det = computeDet (inputMatrix);
+
+    if (det % fieldOrder == 0)
+    {
+        cout << "MATRIX HAS ZERO DETERMINANT. INVERSE MATRIX CANNOT BE FOUND.\n";
+        return;
+    }
+
     while (det < 0)
         det += fieldOrder;
-    
+
     gcdExtended (det, fieldOrder, detInverse, dummyVariable);
     conjugateMatrix = getConjugateMatrix (inputMatrix);
     reduceMatrix (conjugateMatrix, fieldOrder, detInverse);
@@ -767,6 +814,12 @@ void checkDistributivityMachinerie (vector<vector<int>> mCT, vector<vector<int>>
             cout << "OPERATION IS DISTRIBUTIVE.\n";
     }
 }
+
+/*1 1 1 1 1 
+1 2 3 4 5
+1 3 5 2 4
+1 4 2 5 3
+1 5 4 3 2*/
 
 void checkDistributivity ()
 {

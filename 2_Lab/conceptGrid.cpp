@@ -319,17 +319,17 @@ void getSystemOfRepresentatives (vector<vector<int>> adjMatrix)
 	{
 		cout << "{ ";
 
-		for (j = 0; j < connectedComponents[i].size(); ++j)		
+		for (j = 0; j < connectedComponents[i].size(); ++j)
 			cout << connectedComponents[i][j] + 1 << (j == connectedComponents[i].size() - 1 ? " " : ", ");
-		
+
 		cout << "}" << (i == connectedComponents.size() - 1 ? "." : ", ");
 	}
-	
+
 	for (i = 0; i < connectedComponents.size(); ++i)
 		systemOfRepresentatives.push_back(getMin (connectedComponents[i]));
 
 	cout << "\nSYSTEM OF REPRESENTATIVES OF THIS BINARY RELATION IS:\n";
-	
+
 	for (i = 0; i < systemOfRepresentatives.size(); ++i)
 		cout << "{ " << systemOfRepresentatives[i] + 1<< " }" << (i == systemOfRepresentatives.size() - 1 ? "." : ", ");
 }
@@ -341,7 +341,7 @@ vector<int> getDivisors(int numberX)
 	int i, numberOfDivisors = 0;
 	char includeOne = '.', includeX = '.';
 	vector<int> divisors;
-		
+
 	for (i = 2; i * i < numberX; ++i)
 		if (numberX % i == 0)
 			++numberOfDivisors;
@@ -354,13 +354,13 @@ vector<int> getDivisors(int numberX)
 
 	if (includeOne == 'y')
 		divisors.push_back(1);
-		
+
 	while (includeX != 'y' && includeX != 'n')
 	{
 		cout << "INCLUDE " << numberX << " ? (y/n):\n";
 		cin >> includeX;
 	}
-	
+
 	if (includeX == 'y')
 		divisors.push_back(numberX);
 
@@ -480,7 +480,7 @@ void printHasseDiagram(vector<vector<int>> HasseLevels, vector<vector<pair<int, 
 
 		cout << "\n";
 	}
-	
+
 	for (i = HasseLevelConnections.size() - 1; i >= 0; --i)
 	{
 		for (j = 0; j < HasseLevelConnections[i].size(); ++j)
@@ -501,7 +501,7 @@ void printHasseDiagram(vector<vector<int>> HasseLevels, vector<vector<pair<int, 
 			cout << HasseLevels[0][i] << (i == HasseLevels[0].size() - 1 ? "." : ", ");
 
 		cout << "\n";
-	}		
+	}
 	else
 	{
 		cout << HasseLevels[0][0] << ".\n";
@@ -543,7 +543,6 @@ void HasseDiagram ()
 		HasseLevels.push_back (mins);
 		removeMins (divisors, mins);
 	}
-	
 	HasseLevelConnections = getHasseConnections (HasseLevels);
 	printHasseDiagram (HasseLevels, HasseLevelConnections);
 }
@@ -587,7 +586,7 @@ vector<int> getMinsMatrix (vector<vector<int>> matrix, vector<int> elements)
 {
 	int i, j;
 	vector<int> mins;
-	
+
 	for (i = 0; i < matrixDimension; ++i)
 	{
 		bool isMin = true;
@@ -676,7 +675,7 @@ void HasseDiagramMatrix ()
 
 	for (i = 0; i < HasseLevels.size () - 1; ++i)	
 		getHasseConnectionsMatrix (matrixCopy, HasseLevels[i], HasseLevels[i + 1], HasseLevelConnections);
-	
+
 	displayLevelsAndConnections (HasseLevels, HasseLevelConnections);
 }
 
@@ -781,7 +780,6 @@ void getSubsetRelation (map<vector<int>, vector<vector<int>>>& subsetRelation, v
 		for (j = 0; j < setGrid.size (); ++j)
 			if (isSubset (setAndSubsets.first, setGrid[j]) && setAndSubsets.first != setGrid[j])
 				subsets.push_back (setGrid[j]);
-
 		subsetRelation[setAndSubsets.first] = subsets;
 	}
 }
@@ -857,7 +855,7 @@ vector<char> getAttributeSetConceptMachinerie (int objectNum, vector<vector<int>
 	for (i = 0; i < matrix.size (); ++i)
 		if (matrix[objectNum][i] == 1)
 			objectAttributes.push_back (attributeSet[i]);
-		
+
 	if (objectAttributes.empty ())
 		objectAttributes.push_back ('!');
 
@@ -1022,7 +1020,6 @@ void getHasseDiagramConceptGrid (vector<vector<int>>& closuredSetGrid, vector<ve
 	for (i = 0; i < closuredSetGrid.size (); ++i)
 	{
 		vector<vector<int>> subsets;
-
 		subsetRelation[closuredSetGrid[i]] = subsets;
 	}
 
@@ -1033,7 +1030,6 @@ void getHasseDiagramConceptGrid (vector<vector<int>>& closuredSetGrid, vector<ve
 		HasseLevels.push_back (mins);
 		removeMinsConcept (subsetRelation, closuredSetGrid, mins);
 	}
-
 	getHasseConnectionsConcept (HasseLevels, HasseLevelsConnections);
 	HasseAttributeSet (HasseLevels, HasseLevelsConnections, matrix);
 }
@@ -1045,7 +1041,7 @@ void getInverse (vector<vector<int>> matrix, vector<vector<int>>& closuredSetGri
 
 	for (i = 0; i < matrixDimension; ++i)
 		inverseRow.push_back (i);
-	
+
 	closuredSetGrid.push_back (inverseRow);
 	inverseRow.clear ();
 
@@ -1094,10 +1090,10 @@ void opSwitch (vector<int> ops)
 	{
 		switch (ops[i])
 		{
-			case 1:				
+			case 1:
 				cout << "INPUT MATRIX DIMENSION:\n";
 				cin >> matrixDimension;
-				getMatrix (adjMatrix);				
+				getMatrix (adjMatrix);
 				equivalenceClosure (adjMatrix);
 				cout << "THE ELEMENTS OF YOUR MATRIX AFTER CLOSURE ARE:\n";
 				displayMatrix (adjMatrix);
@@ -1109,7 +1105,7 @@ void opSwitch (vector<int> ops)
 				getMatrix (adjMatrix);
 				equivalenceClosure (adjMatrix);
 				cout << "THE ELEMENTS OF YOUR MATRIX AFTER CLOSURE ARE:\n";
-				displayMatrix (adjMatrix);				
+				displayMatrix (adjMatrix);
 				getSystemOfRepresentatives (adjMatrix);
 				cout << "\n\n";
 				break;

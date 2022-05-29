@@ -3,6 +3,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -293,7 +294,7 @@ map<int, set<int>> generateBinaryRelation(int numberOfPairs, int range, map<int,
     for (i = 0; i < numberOfPairs; ++i)
     {
         multiplyingFactor = ((double)rand()) / RAND_MAX;
-        firstEl = floor(multiplyingFactor * range);
+        firstEl = floor (multiplyingFactor * range);
         multiplyingFactor = ((double)rand()) / RAND_MAX;
         secondEl = floor(multiplyingFactor * range);
 
