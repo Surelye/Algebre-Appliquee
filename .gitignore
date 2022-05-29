@@ -16,3 +16,5 @@
 *.pl
 *.bib
 *.fdb_latexmk
+/auto
+.pdf-view-restore
