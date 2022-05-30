@@ -689,7 +689,7 @@ bool constructLeftTables (vector<vector<int>> mCT, vector<vector<int>> aCT, int 
     // displayLeftCayleyTablesDistrib (lTable, rTable, curEl);
   return (lTable == rTable);
 }
-
+ 
 void displayRightCayleyTablesDistrib (vector<vector<int>> lT, vector<vector<int>> rT, int curEl)
 {
   int i, j;
