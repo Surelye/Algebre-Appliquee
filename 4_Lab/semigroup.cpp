@@ -66,16 +66,12 @@ void getSubsemigroupMachinerie (vector<vector<int>> CayleyTable, set<int>& subse
       for (i = X_i.begin (); i != X_i.end (); ++i)
         for (j = X_i.begin (); j != X_i.end (); ++j)
           newElements.insert (CayleyTable[*i][*j]);
-
       for (i = newElements.begin (); i != newElements.end (); ++i)
         X_i.insert (*i);
-
       if (X_i.size () - curSize == 0)
         break;
-
       newElements.clear ();
     }
-
   subsemigroup = X_i;
 }
 
@@ -141,13 +137,10 @@ void getSemigroupMachinerie (set<vector<vector<unsigned short>>> binaryRelationS
       for (i = X_i.begin (); i != X_i.end (); ++i)
         for (j = X_i.begin (); j != X_i.end (); ++j)
           newElements.insert (boolMatricesMultiplication (*i, *j));
-
       for (i = newElements.begin (); i != newElements.end (); ++i)
         X_i.insert (*i);
-
       if (X_i.size () - curSize == 0)
         break;
-
       newElements.clear ();
     }
   semigroup = X_i;
@@ -235,7 +228,6 @@ void getSemigroup ()
         }
       cout << '\n';
     }
-
   display_matrix_Cayley_table (matrixMappings);
 }
 
